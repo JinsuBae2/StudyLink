@@ -47,7 +47,13 @@ public class TagService {
     }
 
     private Tag findOrCreateTag(String tagName) {
-        return tagRepository.findByName(tagName)
-                .orElseGet(() -> tagRepository.save(new Tag(tagName))); // 없으면 새로 만들어서 저장
+        String normalizedTagName = normalizeTagName(tagName);
+
+        return tagRepository.findByName(normalizedTagName)
+                .orElseGet(() -> tagRepository.save(new Tag(normalizedTagName))); // 없으면 새로 만들어서 저장
+    }
+
+    private String normalizeTagName(String name) {
+        return name.trim().toLowerCase().replaceAll("\\s+", "");
     }
 }

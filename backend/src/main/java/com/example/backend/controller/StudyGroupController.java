@@ -62,7 +62,7 @@ public class StudyGroupController {
     }
 
     // 스터디 그룹 추천 목록 (v1: 점수 기반 추천 알고리즘)
-    @GetMapping("/recommendactions")
+    @GetMapping("/recommendations")
     public ResponseEntity<List<RecommendedStudyGroupDto>> getRecommendedStudyGroups(
             @AuthenticationPrincipal UserDetails userDetails
             ) {
