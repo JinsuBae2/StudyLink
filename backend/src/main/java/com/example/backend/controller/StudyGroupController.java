@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.studygroup.*;
+import com.example.backend.service.RecommendationService;
 import com.example.backend.service.StudyGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/study-group")
+@RequestMapping("/api/study-groups")
 @RequiredArgsConstructor
 public class StudyGroupController {
 
     private final StudyGroupService studyGroupService;
+    private final RecommendationService recommendationService;
 
     // 스터디 그룹 생성
     @PostMapping
@@ -67,6 +69,14 @@ public class StudyGroupController {
             @AuthenticationPrincipal UserDetails userDetails
             ) {
         List<RecommendedStudyGroupDto> recommendedGroups = studyGroupService.recommendStudyGroups(userDetails);
+        return ResponseEntity.ok(recommendedGroups);
+    }
+
+    @GetMapping("/recommendations/v2")
+    public ResponseEntity<List<RecommendedStudyGroupDto>> getRecommendedStudyGroupV2(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        List<RecommendedStudyGroupDto> recommendedGroups = recommendationService.recommendGroupsByContent(userDetails);
         return ResponseEntity.ok(recommendedGroups);
     }
 }
