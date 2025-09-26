@@ -8,7 +8,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -55,10 +57,10 @@ public class User {
 
     // --- 연관관계 ---
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<UserTag> userTags = new ArrayList<>();
+    private final Set<UserTag> userTags = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<StudyMember> studyMembers = new ArrayList<>();
+    private final Set<StudyMember> studyMembers = new HashSet<>();
 
     @OneToMany(mappedBy = "applicant", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Application> applications = new ArrayList<>();

@@ -8,8 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -56,14 +56,14 @@ public class StudyGroup {
 
     // StudyGroup(1) : StudyMember(N)
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<StudyMember> studyMembers = new ArrayList<>();
+    private final Set<StudyMember> studyMembers = new HashSet<>();
 
     // StudyGroup(1) : Application(N)
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Application> applications = new ArrayList<>();
+    private final Set<Application> applications = new HashSet<>();
 
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<StudyGroupTag> studyGroupTags = new ArrayList<>();
+    private final Set<StudyGroupTag> studyGroupTags = new HashSet<>();
 
 
     //Builder

@@ -1,9 +1,6 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.studygroup.StudyGroupCreateRequestDto;
-import com.example.backend.dto.studygroup.StudyGroupDetailResponseDto;
-import com.example.backend.dto.studygroup.StudyGroupListResponseDto;
-import com.example.backend.dto.studygroup.StudyGroupUpdateRequestDto;
+import com.example.backend.dto.studygroup.*;
 import com.example.backend.service.StudyGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -62,5 +59,14 @@ public class StudyGroupController {
             @AuthenticationPrincipal UserDetails userDetails) {
         studyGroupService.deleteStudyGroup(id, userDetails);
         return ResponseEntity.ok("스터디 그룹이 삭제되었습니다.");
+    }
+
+    // 스터디 그룹 추천 목록 (v1: 점수 기반 추천 알고리즘)
+    @GetMapping("/recommendactions")
+    public ResponseEntity<List<RecommendedStudyGroupDto>> getRecommendedStudyGroups(
+            @AuthenticationPrincipal UserDetails userDetails
+            ) {
+        List<RecommendedStudyGroupDto> recommendedGroups = studyGroupService.recommendStudyGroups(userDetails);
+        return ResponseEntity.ok(recommendedGroups);
     }
 }

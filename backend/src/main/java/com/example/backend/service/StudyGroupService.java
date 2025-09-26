@@ -1,9 +1,6 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.studygroup.StudyGroupCreateRequestDto;
-import com.example.backend.dto.studygroup.StudyGroupDetailResponseDto;
-import com.example.backend.dto.studygroup.StudyGroupListResponseDto;
-import com.example.backend.dto.studygroup.StudyGroupUpdateRequestDto;
+import com.example.backend.dto.studygroup.*;
 import com.example.backend.entity.*;
 import com.example.backend.repository.StudyGroupRepository;
 import com.example.backend.repository.TagRepository;
@@ -13,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,7 +63,7 @@ public class StudyGroupService {
     public List<StudyGroupListResponseDto> findAllStudyGroup() {
         return studyGroupRepository.findAll().stream()
                 .map(StudyGroupListResponseDto::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // 스터디 그룹 단일 조회
@@ -113,5 +111,52 @@ public class StudyGroupService {
         }
 
         studyGroupRepository.delete(studyGroup);
+    }
+
+    // 스터디 그룹 추천 목록 (v1: 점수 기반 추천 알고리즘)
+    @Transactional(readOnly = true)
+    public List<RecommendedStudyGroupDto> recommendStudyGroups(UserDetails userDetails) {
+        User currentUser = userRepository.findByEmailWithDetails(userDetails.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 사용자가 이미 속해있거나, 생성한 스터디 그룹 ID 목록을 미리 준비
+        Set<Long> excludedGroupIds = currentUser.getStudyMembers().stream()
+                                                .map(sm -> sm.getStudyGroup().getId())
+                                                .collect(Collectors.toSet());
+
+        studyGroupRepository.findAllByCreator(currentUser)
+                .forEach(sg -> excludedGroupIds.add(sg.getId()));
+
+        List<StudyGroup> allStudyGroups = studyGroupRepository.findAllWithTags();
+
+        return allStudyGroups.stream()
+                .filter(studyGroup -> !excludedGroupIds.contains(studyGroup.getId()))
+                .map(studyGroup -> new RecommendedStudyGroupDto(studyGroup, calculateMatchScore(currentUser, studyGroup)))
+                .filter(dto -> dto.getMatchScore() > 0)
+                .sorted(Comparator.comparing(RecommendedStudyGroupDto::getMatchScore).reversed())
+                .toList();
+    }
+
+    // 추천 알고리즘 점수 계산
+    private double calculateMatchScore(User user, StudyGroup studyGroup) {
+        double score = 0;
+
+        Set<String> userTags = user.getUserTags().stream()
+                .map(userTag -> userTag.getTag().getName())
+                .collect(Collectors.toSet());
+
+        Set<String> groupTags = studyGroup.getStudyGroupTags().stream()
+                .map(studyGroupTag -> studyGroupTag.getTag().getName())
+                .collect(Collectors.toSet());
+
+        Set<String> commonTags = new HashSet<>(userTags);
+        commonTags.retainAll(groupTags);
+        score += userTags.size() * 20.0;
+
+        if (user.getStudyStyle() != null && user.getStudyStyle() == studyGroup.getCreator().getStudyStyle()) {
+            score += 15;
+        }
+
+        return score;
     }
 }
