@@ -3,7 +3,6 @@ package com.example.backend.service;
 import com.example.backend.dto.studygroup.*;
 import com.example.backend.entity.*;
 import com.example.backend.repository.StudyGroupRepository;
-import com.example.backend.repository.TagRepository;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +21,7 @@ public class StudyGroupService {
 
     private final StudyGroupRepository studyGroupRepository;
     private final UserRepository userRepository;
-    private final TagRepository tagRepository;
+    private final TagService tagService;
 
     // 스터디 그룹 생성
     @Transactional
@@ -39,20 +38,12 @@ public class StudyGroupService {
                 .memberCount(requestDto.getMemberCount())
                 .recruitmentDeadline(requestDto.getRecruitmentDeadline())
                 .creator(creator)
+                .studyStyle(requestDto.getStudyStyle())
                 .build();
 
         // 태그 처리 로직
 
-        if (requestDto.getTags() != null && !requestDto.getTags().isEmpty()) {
-            Set<String> uniqueTagNames = new HashSet<>(requestDto.getTags());
-            uniqueTagNames.stream()
-                    .map(tagName -> tagRepository.findByName(tagName)
-                            .orElseGet(() -> new Tag(tagName)))
-                    .forEach(tag -> {
-                        StudyGroupTag studyGroupTag = new StudyGroupTag(newStudyGroup, tag);
-                        newStudyGroup.getStudyGroupTags().add(studyGroupTag);
-                    });
-        }
+        tagService.processStudyGroupTags(newStudyGroup, requestDto.getTags());
 
         studyGroupRepository.save(newStudyGroup);
     }
@@ -86,16 +77,7 @@ public class StudyGroupService {
 
         // 태그 정보 업데이트 (기존 태그는 모두 지우고 새로 추가하는 방식)
         studyGroup.getStudyGroupTags().clear();
-        if (requestDto.getTags() != null && !requestDto.getTags().isEmpty()) {
-            Set<String> uniqueTagNames = new HashSet<>(requestDto.getTags());
-            uniqueTagNames.stream()
-                    .map(tagName -> tagRepository.findByName(tagName)
-                            .orElseGet(() -> new Tag(tagName)))
-                    .forEach(tag -> {
-                        StudyGroupTag studyGroupTag = new StudyGroupTag(studyGroup, tag);
-                        studyGroup.getStudyGroupTags().add(studyGroupTag);
-                    });
-        }
+        tagService.processStudyGroupTags(studyGroup, requestDto.getTags());
 
         studyGroup.update(requestDto);
     }
@@ -151,9 +133,9 @@ public class StudyGroupService {
 
         Set<String> commonTags = new HashSet<>(userTags);
         commonTags.retainAll(groupTags);
-        score += userTags.size() * 20.0;
+        score += commonTags.size() * 20.0;
 
-        if (user.getStudyStyle() != null && user.getStudyStyle() == studyGroup.getCreator().getStudyStyle()) {
+        if (user.getStudyStyle() != null && studyGroup.getStudyGroupTags() != null && user.getStudyStyle() == studyGroup.getStudyStyle()) {
             score += 15;
         }
 

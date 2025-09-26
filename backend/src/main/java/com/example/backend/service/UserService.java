@@ -1,13 +1,16 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.user.UserLoginDto;
+import com.example.backend.dto.user.UserProfileUpdateRequestDto;
 import com.example.backend.dto.user.UserSignupRequestDto;
 import com.example.backend.entity.User;
 import com.example.backend.jwt.JwtTokenProvider;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,9 +18,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final TagService tagService;
 
     // 회원가입
+    @Transactional
     public void signUp(UserSignupRequestDto requestDto) {
         String encodePassword = passwordEncoder.encode(requestDto.getPassword());
 
@@ -31,6 +35,8 @@ public class UserService {
                 .job(requestDto.getJob())
                 .goal(requestDto.getGoal())
                 .build();
+
+        tagService.processUserTags(user, requestDto.getTags());
 
         userRepository.save(user);
     }
@@ -46,5 +52,16 @@ public class UserService {
         }
 
         return jwtTokenProvider.createToken(user.getEmail());
+    }
+
+    @Transactional
+    public void updateUserProfile(UserDetails userDetails, UserProfileUpdateRequestDto requestDto) {
+        User currentUser = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        currentUser.updateProfile(requestDto);
+
+        currentUser.getUserTags().clear();
+        tagService.processUserTags(currentUser, requestDto.getTags());
     }
 }

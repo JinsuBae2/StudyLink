@@ -1,5 +1,6 @@
 package com.example.backend.entity;
 
+import com.example.backend.dto.user.UserProfileUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -77,5 +78,20 @@ public class User {
         this.goal = goal;
         this.studyStyle = studyStyle;
         this.isAvailableNow = false; // 기본값은 false로 설정
+    }
+
+    public void updateProfile(UserProfileUpdateRequestDto requestDto) {
+        if (requestDto.getNickname() != null) this.nickname = requestDto.getNickname();
+        if (requestDto.getCareer() != null) this.career = requestDto.getCareer();
+        if (requestDto.getJob() != null) this.job = requestDto.getJob();
+        if (requestDto.getGoal() != null) this.goal = requestDto.getGoal();
+        if (requestDto.getStudyStyle() != null) this.studyStyle = requestDto.getStudyStyle();
+    }
+
+    public void addUserTag(UserTag userTag) {
+        this.userTags.add(userTag);
+        if (userTag.getUser() != this) { // 무한 루프 방지
+            userTag.setUser(this);
+        }
     }
 }

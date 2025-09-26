@@ -54,6 +54,9 @@ public class StudyGroup {
     @JoinColumn(name = "creator_id", nullable = false)
     private User creator;
 
+    @Enumerated(EnumType.STRING)
+    private StudyStyle studyStyle;
+
     // StudyGroup(1) : StudyMember(N)
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<StudyMember> studyMembers = new HashSet<>();
@@ -68,7 +71,9 @@ public class StudyGroup {
 
     //Builder
     @Builder
-    public StudyGroup(String title, String topic, String description, String goal, int memberCount, LocalDate recruitmentDeadline, User creator) {
+    public StudyGroup(String title, String topic, String description,
+                      String goal, int memberCount, LocalDate recruitmentDeadline,
+                      User creator, StudyStyle studyStyle) {
         this.title = title;
         this.topic = topic;
         this.description = description;
@@ -76,27 +81,25 @@ public class StudyGroup {
         this.memberCount = memberCount;
         this.recruitmentDeadline = recruitmentDeadline;
         this.creator = creator;
+        this.studyStyle = studyStyle;
     }
 
     public void update(StudyGroupUpdateRequestDto requestDto) {
         // title 필드가 null이 아니면, this.title을 업데이트한다.
-        if (requestDto.getTitle() != null) {
-            this.title = requestDto.getTitle();
-        }
-        if (requestDto.getTopic() != null) {
-            this.topic = requestDto.getTopic();
-        }
-        if (requestDto.getDescription() != null) {
-            this.description = requestDto.getDescription();
-        }
-        if (requestDto.getGoal() != null) {
-            this.goal = requestDto.getGoal();
-        }
-        if (requestDto.getMemberCount() != null) {
-            this.memberCount = requestDto.getMemberCount();
-        }
-        if (requestDto.getRecruitmentDeadLine() != null) {
-            this.recruitmentDeadline = requestDto.getRecruitmentDeadLine();
+        if (requestDto.getTitle() != null) this.title = requestDto.getTitle();
+        if (requestDto.getTopic() != null) this.topic = requestDto.getTopic();
+        if (requestDto.getDescription() != null) this.description = requestDto.getDescription();
+        if (requestDto.getGoal() != null) this.goal = requestDto.getGoal();
+        if (requestDto.getMemberCount() != null) this.memberCount = requestDto.getMemberCount();
+        if (requestDto.getRecruitmentDeadLine() != null) this.recruitmentDeadline = requestDto.getRecruitmentDeadLine();
+        if (requestDto.getStudyStyle() != null) this.studyStyle = requestDto.getStudyStyle();
+
+    }
+
+    public void addStudyGroupTag(StudyGroupTag studyGroupTag) {
+        this.studyGroupTags.add(studyGroupTag);
+        if (studyGroupTag.getStudyGroup() != this) { // 무한 루프 방지
+            studyGroupTag.setStudyGroup(this);
         }
     }
 }

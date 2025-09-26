@@ -1,13 +1,11 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @EqualsAndHashCode(of = {"user", "tag"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_tag")
@@ -32,4 +30,6 @@ public class UserTag {
         this.user = user;
         this.tag = tag;
     }
+
+
 }

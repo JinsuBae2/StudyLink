@@ -5,19 +5,16 @@ import com.example.backend.entity.StudyStyle;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class UserSignupRequestDto {
-    private String email;
-    private String password;
+public class UserProfileUpdateRequestDto {
     private String nickname;
     private Career career;
-    private LocalDate birthDate;
     private String job;
     private String goal;
     private StudyStyle studyStyle;
     private List<String> tags;
+
 }

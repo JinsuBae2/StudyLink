@@ -1,5 +1,6 @@
 package com.example.backend.dto.studygroup;
 
+import com.example.backend.entity.StudyStyle;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ public class StudyGroupCreateRequestDto {
     private String description;
     private String goal;
     private Integer memberCount;
+    private StudyStyle studyStyle;
     private List<String> tags;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
