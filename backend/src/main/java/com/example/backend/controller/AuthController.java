@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.user.LoginResposeDto;
 import com.example.backend.dto.user.UserLoginDto;
 import com.example.backend.dto.user.UserSignupRequestDto;
 import com.example.backend.service.UserService;
@@ -25,8 +26,8 @@ public class AuthController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto) {
+    public ResponseEntity<LoginResposeDto> login(@RequestBody UserLoginDto userLoginDto) {
         String token = userService.login(userLoginDto);
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(new LoginResposeDto(token));
     }
 }
