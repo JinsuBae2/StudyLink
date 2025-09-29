@@ -31,8 +31,11 @@ public class StudyGroupController {
 
     // 스터디 그룹 전체 조회
     @GetMapping
-    public ResponseEntity<List<StudyGroupListResponseDto>> findAllStudyGroup() {
-        List<StudyGroupListResponseDto> studyGroups = studyGroupService.findAllStudyGroup();
+    public ResponseEntity<List<StudyGroupListResponseDto>> findAllStudyGroup(
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false, defaultValue = "latest") String sort
+    ) {
+        List<StudyGroupListResponseDto> studyGroups = studyGroupService.findAllStudyGroup(region, sort);
         return ResponseEntity.ok(studyGroups);
     }
 

@@ -16,6 +16,7 @@ public class StudyGroupUpdateRequestDto {
     private String goal;
     private Integer memberCount;
     private LocalDate recruitmentDeadLine;
+    private String region;
     private StudyStyle studyStyle;
     private List<String> tags;
 }

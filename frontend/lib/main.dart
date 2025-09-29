@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'pages/login_page.dart';
+import 'package:frontend/pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const LoginPage(), // 👈 시작 페이지를 LoginPage로 설정할 거야.
+      home: const HomePage(), // 👈 시작 페이지를 SplashPage로 변경!
     );
   }
 }

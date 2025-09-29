@@ -17,6 +17,7 @@ public class StudyGroupCreateRequestDto {
     private String goal;
     private Integer memberCount;
     private StudyStyle studyStyle;
+    private String region;
     private List<String> tags;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")

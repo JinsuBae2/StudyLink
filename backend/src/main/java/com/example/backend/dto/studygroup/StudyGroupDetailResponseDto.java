@@ -15,6 +15,7 @@ public class StudyGroupDetailResponseDto {
     private final String goal;
     private final Integer memberCount;
     private final LocalDate recruitmemtDeadLine;
+    private final String region;
     private final String creatorNickname;
     private final LocalDateTime createAt;
 
@@ -26,6 +27,7 @@ public class StudyGroupDetailResponseDto {
         this.goal = studyGroup.getGoal();
         this.memberCount = studyGroup.getMemberCount();
         this.recruitmemtDeadLine = studyGroup.getRecruitmentDeadline();
+        this.region = studyGroup.getRegion();
         this.creatorNickname = studyGroup.getCreator().getNickname();
         this.createAt = studyGroup.getCreatedAt();
     }

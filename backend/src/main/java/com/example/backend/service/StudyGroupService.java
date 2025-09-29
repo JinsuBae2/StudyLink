@@ -5,10 +5,14 @@ import com.example.backend.entity.*;
 import com.example.backend.repository.StudyGroupRepository;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +41,7 @@ public class StudyGroupService {
                 .goal(requestDto.getGoal())
                 .memberCount(requestDto.getMemberCount())
                 .recruitmentDeadline(requestDto.getRecruitmentDeadline())
+                .region(requestDto.getRegion())
                 .creator(creator)
                 .studyStyle(requestDto.getStudyStyle())
                 .build();
@@ -51,8 +56,32 @@ public class StudyGroupService {
 
     // 스터디 그룹 전체 조회
     @Transactional(readOnly = true)
-    public List<StudyGroupListResponseDto> findAllStudyGroup() {
-        return studyGroupRepository.findAll().stream()
+    public List<StudyGroupListResponseDto> findAllStudyGroup(String region, String sort) {
+        List<StudyGroup> studyGroups;
+        boolean hasRegion = region != null && !region.isBlank();
+
+        // region 유무에 따라 1차 분기
+        if (hasRegion) {
+            // 지역 필터링이 있는 경우
+            studyGroups = switch (sort) {
+                case "popular" -> studyGroupRepository.findAllByRegionOrderByPopularity(region, PageRequest.of(0, 10));
+                case "deadline" ->
+                        studyGroupRepository.findAllByRegionAndRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(region, LocalDate.now());
+                default -> // "latest"
+                        studyGroupRepository.findAllByRegionOrderByIdDesc(region);
+            };
+        } else {
+            // 지역 필터링이 없는 경우
+            studyGroups = switch (sort) {
+                case "popular" -> studyGroupRepository.findAllOrderByPopularity(PageRequest.of(0, 10));
+                case "deadline" ->
+                        studyGroupRepository.findAllByRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(LocalDate.now());
+                default -> // "latest"
+                        studyGroupRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+            };
+        }
+
+        return studyGroups.stream()
                 .map(StudyGroupListResponseDto::new)
                 .toList();
     }

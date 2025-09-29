@@ -40,6 +40,8 @@ public class StudyGroup {
     @Column(name = "recruitment_deadline")
     private LocalDate recruitmentDeadline;
 
+    private String region;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -73,7 +75,7 @@ public class StudyGroup {
     @Builder
     public StudyGroup(String title, String topic, String description,
                       String goal, int memberCount, LocalDate recruitmentDeadline,
-                      User creator, StudyStyle studyStyle) {
+                      User creator, StudyStyle studyStyle, String region) {
         this.title = title;
         this.topic = topic;
         this.description = description;
@@ -82,6 +84,7 @@ public class StudyGroup {
         this.recruitmentDeadline = recruitmentDeadline;
         this.creator = creator;
         this.studyStyle = studyStyle;
+        this.region = region;
     }
 
     public void update(StudyGroupUpdateRequestDto requestDto) {
@@ -93,6 +96,7 @@ public class StudyGroup {
         if (requestDto.getMemberCount() != null) this.memberCount = requestDto.getMemberCount();
         if (requestDto.getRecruitmentDeadLine() != null) this.recruitmentDeadline = requestDto.getRecruitmentDeadLine();
         if (requestDto.getStudyStyle() != null) this.studyStyle = requestDto.getStudyStyle();
+        if (requestDto.getRegion() != null) this.region = requestDto.getRegion();
 
     }
 

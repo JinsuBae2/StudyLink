@@ -12,6 +12,7 @@ public class StudyGroupListResponseDto {
     private final String topic;
     private final String creatorNickname;
     private final LocalDate recruitmentDeadline;
+    private String region;
 
     public StudyGroupListResponseDto(StudyGroup studyGroup) {
         this.id = studyGroup.getId();
@@ -19,5 +20,6 @@ public class StudyGroupListResponseDto {
         this.topic = studyGroup.getTopic();
         this.creatorNickname = studyGroup.getCreator().getNickname();
         this.recruitmentDeadline = studyGroup.getRecruitmentDeadline();
+        this.region = studyGroup.getRegion();
     }
 }
