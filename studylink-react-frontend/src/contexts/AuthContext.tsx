@@ -1,10 +1,12 @@
-import React, { createContext, useState, useContext, useEffect, type ReactNode } from 'react';
+import { createContext, useState, useContext, useEffect, type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   login: (token: string) => void;
   logout: () => void;
+  getUserId: () => number | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,6 +16,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // 컴포넌트 마운트 시 localStorage에서 토큰 존재 여부 확인
     return localStorage.getItem('jwt_token') !== null;
   });
+
+  const getUserId = useCallback((): number | null => {
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        // 백엔드에서 userId 클레임으로 ID를 넘겨준다고 가정
+        return decodedToken.userId; 
+      } catch (e) {
+        console.error("Failed to decode token:", e);
+        return null;
+      }
+    }
+    return null;
+  }, []);
+
   const navigate = useNavigate();
 
   const login = (token: string) => {
@@ -41,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []); // 빈 배열은 컴포넌트 마운트 시 한 번만 실행됨
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, getUserId }}>
       {children}
     </AuthContext.Provider>
   );
@@ -55,3 +73,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

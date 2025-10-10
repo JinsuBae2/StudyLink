@@ -87,9 +87,22 @@ export interface StudyGroupDetail {
     recruitmemtDeadLine: string; // LocalDate는 string으로 받음
     region: string;
     creatorNickname: string;
+    creatorId: number;
     createAt: string; // LocalDateTime은 string으로 받음
     // 백엔드 DTO에 없는 필드들은 제외 (예: tags, studyStartDate, studyEndDate 등)
     // 필요한 경우 백엔드 DTO를 확장하거나, 프론트에서 필요한 필드를 추가해야 함.
+}
+
+
+export interface ApplicationData {
+  message: string;
+}
+
+export interface Application {
+  applicationId: number;
+  applicantNickname: string;
+  message: string;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
 }
 
 
@@ -126,6 +139,20 @@ export const getRecommendedStudyGroups = () => {
 
 export const getStudyGroupDetail = (id: number) => {
     return apiClient.get<StudyGroupDetail>(`/api/study-groups/${id}`);
+};
+
+export const applyToStudyGroup = (groupId: number, data: ApplicationData) => {
+  return apiClient.post(`/api/study-groups/${groupId}/applications`, data);
+};
+
+// 그룹장이 신청 목록을 조회하는 API
+export const getApplicationsForStudy = (groupId: number) => {
+  return apiClient.get<Application[]>(`/api/study-groups/${groupId}/applications`);
+};
+
+// 그룹장이 신청을 처리하는 API
+export const processApplication = (groupId: number, applicationId: number, data: { status: 'ACCEPTED' | 'REJECTED' }) => {
+  return apiClient.post(`/api/study-groups/${groupId}/applications/${applicationId}/process`, data);
 };
 
 // TODO: 앞으로 만들 다른 API 호출 함수들을 여기에 추가...

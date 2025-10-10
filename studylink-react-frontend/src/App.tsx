@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import StudyDetailPage from './pages/StudyDetailPage';
+import StudyManagePage from './pages/StudyManagePage';
 
 // 로그인된 사용자만 접근 가능한 라우트
 const PrivateRoute = ({ children }: { children: React.ReactElement }) => {
@@ -36,7 +37,16 @@ function App() {
               </PrivateRoute>
             } 
           />
-        </Routes>
+
+          <Route 
+              path="/study/:id/manage" 
+              element={
+                <PrivateRoute>
+                  <StudyManagePage />
+                </PrivateRoute>
+              } 
+            />
+          </Routes>
       </AuthProvider>
     </Router>
   );
