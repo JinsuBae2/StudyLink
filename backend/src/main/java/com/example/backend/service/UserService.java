@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.user.UserLoginDto;
+import com.example.backend.dto.user.UserProfileResponseDto;
 import com.example.backend.dto.user.UserProfileUpdateRequestDto;
 import com.example.backend.dto.user.UserSignupRequestDto;
 import com.example.backend.entity.User;
@@ -64,5 +65,11 @@ public class UserService {
 
         currentUser.getUserTags().clear();
         tagService.processUserTags(currentUser, requestDto.getTags());
+    }
+
+    public UserProfileResponseDto getMyProfile(UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+        return new UserProfileResponseDto(user);
     }
 }

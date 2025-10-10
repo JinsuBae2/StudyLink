@@ -8,10 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -69,6 +66,13 @@ public class User {
     @OneToMany(mappedBy = "applicant", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Application> applications = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<StudyMember> studyMemberships = new ArrayList<>(); // 내가 참여하는 스터디 그룹들
+
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<StudyGroup> createdStudyGroups = new ArrayList<>(); // 내가 생성한 스터디 그룹들
+
+
 
     @Builder
     public User(String email, String password, String nickname, LocalDate birthDate, Career career, String job, String goal, StudyStyle studyStyle, String region) {
@@ -99,4 +103,5 @@ public class User {
             userTag.setUser(this);
         }
     }
+
 }

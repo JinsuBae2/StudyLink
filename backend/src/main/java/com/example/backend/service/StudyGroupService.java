@@ -170,4 +170,27 @@ public class StudyGroupService {
 
         return score;
     }
+
+    // 👈 [추가] 내가 참여 중인 스터디 그룹 목록 조회
+    @Transactional(readOnly = true)
+    public List<MyParticipatingStudyGroupResponseDto> getMyParticipatingStudyGroups(UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        return user.getStudyMemberships().stream()
+                .map(StudyMember::getStudyGroup)
+                .map(MyParticipatingStudyGroupResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    // 👈 [추가] 내가 생성한 스터디 그룹 목록 조회
+    @Transactional(readOnly = true)
+    public List<MyCreatedStudyGroupResponseDto> getMyCreatedStudyGroups(UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+
+        return studyGroupRepository.findAllByCreator(user).stream()
+                .map(MyCreatedStudyGroupResponseDto::new)
+                .collect(Collectors.toList());
+    }
 }

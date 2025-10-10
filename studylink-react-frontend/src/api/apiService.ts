@@ -105,6 +105,60 @@ export interface Application {
   status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
 }
 
+export interface UserProfile {
+  id: number;
+  email: string;
+  nickname: string;
+  birthDate: string;
+  career: 'NEWBIE' | 'JUNIOR' | 'SENIOR';
+  job: string;
+  goal: string;
+  studyStyle: 'ONLINE' | 'OFFLINE' | 'HYBRID';
+  region: string;
+  tags: string[];
+  createdAt: string;
+}
+
+export interface MyStudyGroup {
+  id: number;
+  title: string;
+  topic: string;
+  currentParticipants: number;
+  maxParticipants: number;
+  recruitmemtDeadLine: string;
+}
+
+export interface MyApplication {
+  applicationId: number;
+  studyGroupId: number;
+  studyGroupTitle: string;
+  message: string;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
+  appliedAt: string;
+}
+
+export interface UserProfileUpdateRequest {
+  nickname?: string;
+  career?: 'NEWBIE' | 'JUNIOR' | 'SENIOR';
+  job?: string;
+  goal?: string;
+  studyStyle?: 'ONLINE' | 'OFFLINE' | 'HYBRID';
+  region?: string;
+  tags?: string[];
+}
+
+export interface StudyGroupCreateRequest {
+  title: string;
+  topic: string;
+  description: string;
+  goal: string;
+  memberCount: number; // Integer에 대응하는 number
+  studyStyle: 'ONLINE' | 'OFFLINE' | 'HYBRID' | ''; // 👈 [추가/수정] Enum 타입에 맞게 정의
+  region: string;
+  tags: string[];
+  recruitmentDeadline: string; // LocalDate는 "YYYY-MM-DD" string으로 받음
+}
+
 
 // --- API 호출 함수들 ---
 
@@ -155,5 +209,32 @@ export const processApplication = (groupId: number, applicationId: number, data:
   return apiClient.post(`/api/study-groups/${groupId}/applications/${applicationId}/process`, data);
 };
 
-// TODO: 앞으로 만들 다른 API 호출 함수들을 여기에 추가...
-// 예: export const getStudyGroups = () => apiClient.get('/api/study-groups');
+// 내 프로필 정보 조회
+export const getMyProfile = () => {
+  return apiClient.get<UserProfile>('/api/members/me');
+};
+
+// 내가 참여 중인 스터디 그룹 목록 조회
+export const getMyParticipatingStudyGroups = () => {
+  return apiClient.get<MyStudyGroup[]>('/api/members/me/study-groups');
+};
+
+// 내가 생성한 스터디 그룹 목록 조회
+export const getMyCreatedStudyGroups = () => {
+  return apiClient.get<MyStudyGroup[]>('/api/members/me/created-study-groups');
+};
+
+// 내가 신청한 스터디 그룹 목록 조회
+export const getMyApplications = () => {
+  return apiClient.get<MyApplication[]>('/api/members/me/applications');
+};
+
+// 마이페이지 업데이트
+export const updateMyProfile = (data: UserProfileUpdateRequest) => {
+  return apiClient.put('/api/members/me', data);
+};
+
+// 스터디 그룹 생성 API 호출 함수
+export const createStudyGroup = (data: StudyGroupCreateRequest) => {
+  return apiClient.post('/api/study-groups', data);
+};

@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.dto.Application.ApplicationRequestDto;
 import com.example.backend.dto.Application.ApplicationResponseDto;
 import com.example.backend.dto.Application.ApplicationProcessRequestDto;
+import com.example.backend.dto.Application.MemberApplicationResponseDto;
 import com.example.backend.entity.*;
 import com.example.backend.repository.ApplicationRepository;
 import com.example.backend.repository.StudyGroupRepository;
@@ -90,16 +91,16 @@ public class ApplicationService {
         }
     }
 
-    // 내 신청 현황 조회
     @Transactional(readOnly = true)
-    public List<ApplicationResponseDto> getMyApplications(UserDetails userDetails) {
-        User applicant = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    public List<MemberApplicationResponseDto> getMyApplications(UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
 
-        List<Application> myApplications = applicationRepository.findAllByApplicantId(applicant.getId());
+        // ApplicationRepository에 findByApplicant 메소드가 필요함
+        List<Application> applications = applicationRepository.findAllByApplicantId(user.getId());
 
-        return myApplications.stream()
-                .map(ApplicationResponseDto::new)
+        return applications.stream()
+                .map(MemberApplicationResponseDto::new)
                 .collect(Collectors.toList());
     }
 }

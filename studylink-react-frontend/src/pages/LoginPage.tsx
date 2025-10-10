@@ -1,21 +1,22 @@
 // src/pages/LoginPage.tsx
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { login } from '../api/apiService';
+import { useAuth } from '../contexts/AuthContext';
 import './LoginPage.css'; // 👈 CSS 파일 import
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const {login: authContextLogin} = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await login(email, password);
       localStorage.setItem('jwt_token', response.data.accessToken);
-      navigate('/');
+      authContextLogin(response.data.accessToken);
     } catch (err: any) {
       setError(err.response?.data?.message || '로그인 실패');
     }
