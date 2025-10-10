@@ -40,6 +40,7 @@ public class StudyGroup {
     @Column(name = "recruitment_deadline")
     private LocalDate recruitmentDeadline;
 
+    @Column(name = "region")
     private String region;
 
     @CreationTimestamp

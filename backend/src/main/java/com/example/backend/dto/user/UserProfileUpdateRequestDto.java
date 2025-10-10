@@ -16,5 +16,6 @@ public class UserProfileUpdateRequestDto {
     private String goal;
     private StudyStyle studyStyle;
     private List<String> tags;
+    private String region;
 
 }

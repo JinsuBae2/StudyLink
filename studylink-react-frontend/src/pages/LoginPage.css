@@ -1,0 +1,71 @@
+/* src/pages/LoginPage.css */
+
+.login-container {
+  display: flex;
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center;    /* 수직 중앙 정렬 */
+  min-height: 100vh;      /* 최소 높이: 화면 전체 */
+  width: 100%;            /* 👈 [수정!] 너비는 100%로 */
+  background-color: #f0f2f5; /* 기본 배경색 (전역 CSS와 통일) */
+}
+
+.login-box {
+  padding: 32px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px; /* 폼의 최대 너비 제한 */
+  text-align: center;
+}
+
+
+.login-box h2 {
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.input-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; 
+}
+
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 16px;
+}
+
+.signup-link {
+  margin-top: 20px;
+}

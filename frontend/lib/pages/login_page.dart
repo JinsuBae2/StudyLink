@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/signup_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../constants.dart'; // constants.dart 파일을 import
@@ -137,8 +138,9 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 16.0),
             TextButton(
               onPressed: () {
-                // TODO: 회원가입 페이지로 이동 (나중에 구현)
-                print('회원가입 페이지로 이동');
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const SignupPage()),
+                );
               },
               child: const Text('아직 회원이 아니신가요? 회원가입'),
             ),

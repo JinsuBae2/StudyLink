@@ -31,12 +31,14 @@ dependencies:
   flutter:
     sdk: flutter
 
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
-  http: ^1.1.0
-  shared_preferences: ^2.2.3
+  http: ^1.2.1 # 최신 안정 버전으로 업데이트
+  shared_preferences: ^2.2.3 # 현재 버전도 괜찮지만, 최신은 ^2.2.4
+
+  
+  kakao_map_plugin: ^0.3.7
+  webview_flutter: ^4.13.0
+
 
 dev_dependencies:
   flutter_test:

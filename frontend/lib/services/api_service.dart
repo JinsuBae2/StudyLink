@@ -58,4 +58,20 @@ class ApiService {
       throw Exception('추천 목록을 불러오는데 실패했습니다: ${response.body}');
     }
   }
+
+  // 회원가입을 요청하는 메소드
+  Future<void> signup(Map<String, dynamic> signupData) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/auth/signup'),
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode(signupData),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      // 회원가입 실패 시 에러 처리 (GlobalExceptionHandler가 보낸 JSON 파싱)
+      final errorData = jsonDecode(utf8.decode(response.bodyBytes));
+      throw Exception('회원가입 실패: ${errorData['message']}');
+    }
+    // 성공 시에는 별도의 데이터를 반환하지 않음
+  }
 }

@@ -50,6 +50,9 @@ public class User {
     @Column(name = "is_available_now")
     private Boolean isAvailableNow;
 
+    @Column(name = "region")
+    private String region;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -68,7 +71,7 @@ public class User {
 
 
     @Builder
-    public User(String email, String password, String nickname, LocalDate birthDate, Career career, String job, String goal, StudyStyle studyStyle) {
+    public User(String email, String password, String nickname, LocalDate birthDate, Career career, String job, String goal, StudyStyle studyStyle, String region) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -78,6 +81,7 @@ public class User {
         this.goal = goal;
         this.studyStyle = studyStyle;
         this.isAvailableNow = false; // 기본값은 false로 설정
+        this.region = region;
     }
 
     public void updateProfile(UserProfileUpdateRequestDto requestDto) {
@@ -86,6 +90,7 @@ public class User {
         if (requestDto.getJob() != null) this.job = requestDto.getJob();
         if (requestDto.getGoal() != null) this.goal = requestDto.getGoal();
         if (requestDto.getStudyStyle() != null) this.studyStyle = requestDto.getStudyStyle();
+        if (requestDto.getRegion() != null) this.region = requestDto.getRegion();
     }
 
     public void addUserTag(UserTag userTag) {

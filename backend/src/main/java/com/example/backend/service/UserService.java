@@ -34,6 +34,7 @@ public class UserService {
                 .career(requestDto.getCareer())
                 .job(requestDto.getJob())
                 .goal(requestDto.getGoal())
+                .region(requestDto.getRegion())
                 .build();
 
         tagService.processUserTags(user, requestDto.getTags());

@@ -1,0 +1,36 @@
+/* src/index.css */
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* color-scheme과 color는 제거하거나 주석 처리하여 페이지별 스타일과 충돌 방지 */
+  /* color-scheme: light dark; */
+  /* color: rgba(255, 255, 255, 0.87); */
+  /* background-color: #242424; */ /* 이 부분도 제거 */
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 👇 이 부분이 중요! html과 body가 화면 전체를 차지하도록 */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh; /* 화면 전체 높이를 차지하도록 */
+}
+
+/* 기본 body 배경색을 설정하여 검은색 배경이 보이지 않도록 */
+body {
+  background-color: #f0f2f5; /* 모든 페이지의 기본 배경색 */
+  /* display, place-items, min-width도 여기서는 필요 없어. 각 페이지 컨테이너에서 처리할 거야. */
+}
+
+/* 추가적으로 Link 태그의 밑줄 제거 등 전역 스타일 */
+a {
+  text-decoration: none;
+  color: inherit; /* 부모 요소의 색상 상속 */
+}
