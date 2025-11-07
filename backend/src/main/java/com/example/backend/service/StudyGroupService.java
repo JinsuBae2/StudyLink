@@ -29,7 +29,7 @@ public class StudyGroupService {
 
     // 스터디 그룹 생성
     @Transactional
-    public void createStudyGroup(StudyGroupCreateRequestDto requestDto, UserDetails userDetails) {
+    public StudyGroupDetailResponseDto createStudyGroup(StudyGroupCreateRequestDto requestDto, UserDetails userDetails) {
         String email = userDetails.getUsername();
         User creator = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
@@ -46,44 +46,81 @@ public class StudyGroupService {
                 .studyStyle(requestDto.getStudyStyle())
                 .build();
 
-        // 태그 처리 로직
+        StudyGroup savedStudyGroup = studyGroupRepository.save(newStudyGroup);
 
-        tagService.processStudyGroupTags(newStudyGroup, requestDto.getTags());
+        // 태그 처리 로직 (기존 코드 유지)
+        tagService.processStudyGroupTags(savedStudyGroup, requestDto.getTags());
 
-        studyGroupRepository.save(newStudyGroup);
+        // 생성된 스터디 그룹의 상세 정보를 DTO로 변환하여 반환
+        return new StudyGroupDetailResponseDto(savedStudyGroup);
     }
 
 
     // 스터디 그룹 전체 조회
     @Transactional(readOnly = true)
-    public List<StudyGroupListResponseDto> findAllStudyGroup(String region, String sort) {
+    public List<StudyGroupListResponseDto> findAllStudyGroup(String region, String sort, String search) {
         List<StudyGroup> studyGroups;
         boolean hasRegion = region != null && !region.isBlank();
+        boolean hasSearch = search != null && !search.isBlank();
 
-        // region 유무에 따라 1차 분기
-        if (hasRegion) {
-            // 지역 필터링이 있는 경우
-            studyGroups = switch (sort) {
-                case "popular" -> studyGroupRepository.findAllByRegionOrderByPopularity(region, PageRequest.of(0, 10));
-                case "deadline" ->
-                        studyGroupRepository.findAllByRegionAndRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(region, LocalDate.now());
-                default -> // "latest"
-                        studyGroupRepository.findAllByRegionOrderByIdDesc(region);
-            };
+        if (hasSearch) {
+            List<StudyGroup> allGroups = studyGroupRepository.findAllWithTags();
+            String lowerCaseSearch = search.toLowerCase();
+            studyGroups = allGroups.stream()
+                    .filter(group ->
+                        group.getTitle().toLowerCase().contains(lowerCaseSearch) ||
+                        group.getTopic().toLowerCase().contains(lowerCaseSearch) ||
+                        group.getDescription().toLowerCase().contains(lowerCaseSearch) ||
+                        group.getCreator().getNickname().toLowerCase().contains(lowerCaseSearch) ||
+                        (group.getRegion() != null && group.getRegion().toLowerCase().contains(lowerCaseSearch)) ||
+                        group.getStudyGroupTags().stream()
+                                .anyMatch(sgTag -> sgTag.getTag().getName().toLowerCase().contains(lowerCaseSearch))
+                    )
+                    .collect(Collectors.toList());
         } else {
-            // 지역 필터링이 없는 경우
-            studyGroups = switch (sort) {
-                case "popular" -> studyGroupRepository.findAllOrderByPopularity(PageRequest.of(0, 10));
-                case "deadline" ->
-                        studyGroupRepository.findAllByRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(LocalDate.now());
-                default -> // "latest"
-                        studyGroupRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
-            };
+            // 검색어가 없을 경우: 기존 region/sort 로직 유지
+            if (hasRegion) {
+                // 지역 필터링이 있는 경우
+                studyGroups = switch (sort) {
+                    case "popular" -> studyGroupRepository.findAllByRegionOrderByPopularity(region, PageRequest.of(0, 10));
+                    case "deadline" ->
+                                    studyGroupRepository.findAllByRegionAndRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(region, LocalDate.now());
+                    default -> // "latest"
+                                    studyGroupRepository.findAllByRegionOrderByIdDesc(region);
+                };
+            } else {
+                // 지역 필터링이 없는 경우
+                studyGroups = switch (sort) {
+                    case "popular" -> studyGroupRepository.findAllOrderByPopularity(PageRequest.of(0, 10));
+                    case "deadline" ->
+                                   studyGroupRepository.findAllByRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(LocalDate.now());
+                    default -> // "latest"
+                                    studyGroupRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+                };
+            }
         }
 
         return studyGroups.stream()
                 .map(StudyGroupListResponseDto::new)
                 .toList();
+    }
+
+        // 스터디 그룹 목록 정렬을 위한 헬퍼 메서드 (검색 결과에도 적용 가능)
+        private List<StudyGroup> applySorting(List<StudyGroup> groups, String sort) {
+        return switch (sort) {
+           case "popular" -> groups.stream() // 예시: 인기 기준이 없다면 단순히 id 역순
+                            .sorted(Comparator.comparing(StudyGroup::getId).reversed())
+                            .limit(10) // 인기 10개만 가정
+                            .toList();
+           case "deadline" -> groups.stream()
+                            .filter(group -> group.getRecruitmentDeadline().isAfter(LocalDate.now()))
+                            .sorted(Comparator.comparing(StudyGroup::getRecruitmentDeadline))
+                            .toList();
+           default -> // "latest"
+                            groups.stream()
+                                            .sorted(Comparator.comparing(StudyGroup::getId).reversed())
+                                    .toList();
+        };
     }
 
     // 스터디 그룹 단일 조회
@@ -96,7 +133,7 @@ public class StudyGroupService {
 
     // 그룹장 -> 스터디 그룹 수정
     @Transactional
-    public void     updateStudyGroup(Long groupId, StudyGroupUpdateRequestDto requestDto, UserDetails userDetails) {
+    public StudyGroupDetailResponseDto updateStudyGroup(Long groupId, StudyGroupUpdateRequestDto requestDto, UserDetails userDetails) {
         StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 스터디 그룹을 찾을 수 없습니다."));
 
@@ -109,6 +146,9 @@ public class StudyGroupService {
         tagService.processStudyGroupTags(studyGroup, requestDto.getTags());
 
         studyGroup.update(requestDto);
+
+        // 변경된 studyGroup을 영속성 컨텍스트가 자동으로 감지하므로, DTO로 변환하여 반환
+        return new StudyGroupDetailResponseDto(studyGroup);
     }
 
     // 그룹장 -> 스터디 그룹 삭제

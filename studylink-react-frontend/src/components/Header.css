@@ -1,0 +1,55 @@
+.app-header {
+  background-color: white;
+  padding: 15px 30px;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky; /* 스크롤해도 상단에 고정 */
+  top: 0;
+  z-index: 1000;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.search-bar {
+  display: flex;
+  flex-grow: 0.5; /* 검색창이 공간을 차지하도록 */
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px 0 0 20px;
+  border-right: none;
+  outline: none;
+}
+
+.search-bar button {
+  padding: 8px 15px;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  color: white;
+  border-radius: 0 20px 20px 0;
+  cursor: pointer;
+}
+
+.navigation button {
+  margin-left: 15px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #333;
+}

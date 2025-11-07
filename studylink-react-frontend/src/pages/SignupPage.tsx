@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signup, type SignupData } from '../api/apiService';
 import './SignupPage.css'; // 👈 CSS 파일 import
+import type { AxiosError } from 'axios';
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -40,8 +41,9 @@ function SignupPage() {
       setTimeout(() => {
         navigate('/login'); // 회원가입 성공 시 로그인 페이지로 이동
       }, 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.message || '회원가입에 실패했습니다.');
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      setError(axiosError.response?.data?.message || '회원가입에 실패했습니다.');
     }
   };
 

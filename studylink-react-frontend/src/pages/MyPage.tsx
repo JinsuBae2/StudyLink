@@ -1,3 +1,4 @@
+// src/pages/MyPage.tsx
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -5,18 +6,18 @@ import {
   getMyParticipatingStudyGroups,
   getMyCreatedStudyGroups,
   getMyApplications,
-  type UserProfile,
-  type MyStudyGroup,
-  type MyApplication,
+  type UserProfileResponse,
+  type MyStudyGroupResponse,
+  type MemberApplicationResponse, // 👈 이름 수정
 } from '../api/apiService';
 import './MyPage.css';
 
 function MyPage() {
-    const navigate = useNavigate();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [participatingGroups, setParticipatingGroups] = useState<MyStudyGroup[]>([]);
-  const [createdGroups, setCreatedGroups] = useState<MyStudyGroup[]>([]);
-  const [applications, setApplications] = useState<MyApplication[]>([]);
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<UserProfileResponse | null>(null);
+  const [participatingGroups, setParticipatingGroups] = useState<MyStudyGroupResponse[]>([]);
+  const [createdGroups, setCreatedGroups] = useState<MyStudyGroupResponse[]>([]);
+  const [applications, setApplications] = useState<MemberApplicationResponse[]>([]); // 👈 타입 수정
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -41,7 +42,6 @@ function MyPage() {
         setLoading(false);
       }
     };
-
     fetchMyPageData();
   }, []);
 
@@ -61,11 +61,11 @@ function MyPage() {
             <p><strong>닉네임:</strong> {profile.nickname}</p>
             <p><strong>이메일:</strong> {profile.email}</p>
             <p><strong>생년월일:</strong> {profile.birthDate}</p>
-            <p><strong>경력:</strong> {profile.career}</p>
-            <p><strong>직업:</strong> {profile.job}</p>
-            <p><strong>학습 목표:</strong> {profile.goal}</p>
-            <p><strong>학습 스타일:</strong> {profile.studyStyle}</p>
-            <p><strong>지역:</strong> {profile.region}</p>
+            <p><strong>경력:</strong> {profile.career || '정보 없음'}</p>
+            <p><strong>직업:</strong> {profile.job || '정보 없음'}</p>
+            <p><strong>학습 목표:</strong> {profile.goal || '정보 없음'}</p>
+            <p><strong>학습 스타일:</strong> {profile.studyStyle || '정보 없음'}</p>
+            <p><strong>지역:</strong> {profile.region || '정보 없음'}</p>
             <p><strong>관심 태그:</strong> {profile.tags.join(', ')}</p>
             <p><strong>가입일:</strong> {new Date(profile.createdAt).toLocaleDateString()}</p>
           </div>
@@ -86,9 +86,7 @@ function MyPage() {
                 </div>
               ))}
             </div>
-          ) : (
-            <p>생성한 스터디가 없습니다.</p>
-          )}
+          ) : ( <p>생성한 스터디가 없습니다.</p> )}
           <div className="mypage-actions">
             <Link to="/create-study" className="create-study-button">새 스터디 생성</Link>
           </div>
@@ -107,9 +105,7 @@ function MyPage() {
                 </div>
               ))}
             </div>
-          ) : (
-            <p>참여 중인 스터디가 없습니다.</p>
-          )}
+          ) : ( <p>참여 중인 스터디가 없습니다.</p> )}
         </section>
 
         {/* 내가 신청한 스터디 */}
@@ -126,9 +122,7 @@ function MyPage() {
                 </div>
               ))}
             </div>
-          ) : (
-            <p>신청한 스터디가 없습니다.</p>
-          )}
+          ) : ( <p>신청한 스터디가 없습니다.</p> )}
         </section>
 
         <div className="mypage-bottom-actions">

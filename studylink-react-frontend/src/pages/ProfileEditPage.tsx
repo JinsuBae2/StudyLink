@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getMyProfile, updateMyProfile, type UserProfile, type UserProfileUpdateRequest } from '../api/apiService';
+import { getMyProfile, updateMyProfile, type UserProfileResponse, type UserProfileUpdateRequest } from '../api/apiService';
 import { AxiosError } from 'axios';
 import './ProfileEditPage.css'; // 👈 CSS 파일 import
 
@@ -27,7 +27,7 @@ const studyStyleOptions = [
 
 function ProfileEditPage() {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<UserProfileResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<UserProfileUpdateRequest>({});
@@ -40,11 +40,11 @@ function ProfileEditPage() {
         // 폼 데이터 초기값 설정
         setFormData({
           nickname: response.data.nickname,
-          career: response.data.career,
-          job: response.data.job,
-          goal: response.data.goal,
-          studyStyle: response.data.studyStyle,
-          region: response.data.region,
+          career: undefined,
+          job: undefined,
+          goal: undefined,
+          studyStyle: undefined,
+          region: undefined,
           tags: response.data.tags,
         });
       } catch (err) {

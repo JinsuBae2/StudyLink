@@ -1,0 +1,179 @@
+/* src/pages/StudyManagePage.css */
+
+.study-manage-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.study-manage-container h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2.2em;
+    font-weight: 700;
+}
+
+.manage-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+
+.edit-study-button,
+.delete-study-button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    text-decoration: none; /* Link 태그에도 적용될 수 있도록 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-study-button {
+    background-color: #007bff; /* 파란색 계열 */
+    color: white;
+}
+
+.edit-study-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.delete-study-button {
+    background-color: #dc3545; /* 빨간색 계열 */
+    color: white;
+}
+
+.delete-study-button:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+.applications-section {
+    margin-top: 40px;
+}
+
+.applications-section h2 {
+    color: #555;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.application-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.application-card p {
+    margin-bottom: 8px;
+    color: #444;
+    font-size: 1em;
+}
+
+.application-card strong {
+    color: #333;
+}
+
+.status-pending {
+    color: #ffc107; /* 주황색 */
+    font-weight: bold;
+}
+
+.status-accepted {
+    color: #28a745; /* 초록색 */
+    font-weight: bold;
+}
+
+.status-rejected {
+    color: #dc3545; /* 빨간색 */
+    font-weight: bold;
+}
+
+.application-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.application-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.accept-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.accept-button:hover {
+    background-color: #218838;
+}
+
+.reject-button {
+    background-color: #6c757d;
+    color: white;
+}
+
+.reject-button:hover {
+    background-color: #5a6268;
+}
+
+.bottom-actions {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.back-to-detail-button {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #6c757d;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.05em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.back-to-detail-button:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* 로딩 및 에러 메시지 */
+.loading, .error, .no-data {
+    text-align: center;
+    font-size: 1.2em;
+    color: #555;
+    margin-top: 50px;
+}
+.error {
+    color: #d9534f;
+    font-weight: bold;
+}

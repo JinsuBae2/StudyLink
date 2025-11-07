@@ -1,77 +1,89 @@
 // src/pages/HomePage.tsx
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { getStudyGroups, type StudyGroup } from '../api/apiService';
-import './HomePage.css'; // 👈 CSS 파일 import
+import { Link, useNavigate } from 'react-router-dom'; // useNavigate 임포트
+import { getStudyGroups, type StudyGroupListResponse, getRecommendedStudyGroupsV2, type RecommendedStudyGroup } from '../api/apiService'; // 추천 스터디 API 임포트
+import { useSearch } from '../contexts/SearchContext'; // SearchContext 임포트
+import './HomePage.css';
 
 function HomePage() {
-  const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
+  const { searchTerm, setSearchTerm } = useSearch();
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
-  const [popularGroups, setPopularGroups] = useState<StudyGroup[]>([]);
-  const [deadlineGroups, setDeadlineGroups] = useState<StudyGroup[]>([]);
+  const [popularGroups, setPopularGroups] = useState<StudyGroupListResponse[]>([]);
+  const [deadlineGroups, setDeadlineGroups] = useState<StudyGroupListResponse[]>([]);
+  const [recommendedGroups, setRecommendedGroups] = useState<RecommendedStudyGroup[]>([]); // 추천 스터디
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchHomeData = async () => {
+      setError(null);
+      setLoading(true);
+
       try {
-        setLoading(true);
-        const [popularRes, deadlineRes] = await Promise.all([
+        const [popularRes, deadlineRes, recommendedRes] = await Promise.all([
           getStudyGroups({ sort: 'popular' }),
           getStudyGroups({ sort: 'deadline' }),
+          getRecommendedStudyGroupsV2(), // v2 추천 API 사용
         ]);
         setPopularGroups(popularRes.data);
         setDeadlineGroups(deadlineRes.data);
+        setRecommendedGroups(recommendedRes.data);
       } catch (err) {
-        console.error("데이터 로딩 실패:", err);
+        console.error("홈페이지 데이터 로딩 실패:", err);
+        setError('스터디 목록을 불러오는 데 실패했습니다.');
+        setPopularGroups([]);
+        setDeadlineGroups([]);
+        setRecommendedGroups([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
-  }, []);
+    fetchHomeData();
+  }, []); // 컴포넌트 마운트 시 한 번만 실행
+
+  // 검색어가 변경될 때 SearchResultPage로 리다이렉트
+  useEffect(() => {
+    if (searchTerm) {
+      navigate(`/search?query=${searchTerm}`);
+      setSearchTerm(''); // 검색 후 검색창 초기화
+    }
+  }, [searchTerm, navigate, setSearchTerm]);
+
+
+  if (loading) return <div className="loading">로딩 중...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="home-container">
-      <header className="app-bar">
-        <h1 className="app-bar-title">StudyLink</h1>
-        <nav className="app-bar-nav">
-          {isAuthenticated ? (
-            <>
-              <button onClick={() => navigate('/mypage')}>마이페이지</button>
-              <button onClick={logout}>로그아웃</button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => navigate('/login')}>로그인</button>
-              <button onClick={() => navigate('/signup')}>회원가입</button>
-            </>
-          )}
-        </nav>
-      </header>
-
       <main className="main-content">
-        {loading ? (
-          <div className="loading-spinner">
-            <p>로딩 중...</p> {/* 간단한 로딩 스피너 대신 텍스트로 대체 */}
-          </div>
-        ) : (
-          <>
-            <h2 className="section-title">🔥 인기 스터디</h2>
-            <StudyGroupSection groups={popularGroups} />
+        {/* 추천 스터디 섹션 */}
+        <h2 className="section-title">✨ 맞춤 추천 스터디</h2>
+        <RecommendedStudyGroupSection groups={recommendedGroups} />
+        {recommendedGroups.length === 0 && (
+          <p style={{ textAlign: 'center', padding: '20px' }}>현재 추천 스터디가 없습니다.</p>
+        )}
 
-            <h2 className="section-title" style={{ marginTop: '40px' }}>⏰ 마감 임박 스터디</h2>
-            <StudyGroupSection groups={deadlineGroups} />
-          </>
+        {/* 인기 스터디 섹션 */}
+        <h2 className="section-title" style={{ marginTop: '40px' }}>🔥 인기 스터디</h2>
+        <StudyGroupSection groups={popularGroups} />
+        {popularGroups.length === 0 && (
+          <p style={{ textAlign: 'center', padding: '20px' }}>현재 인기 스터디가 없습니다.</p>
+        )}
+
+        {/* 마감 임박 스터디 섹션 */}
+        <h2 className="section-title" style={{ marginTop: '40px' }}>⏰ 마감 임박 스터디</h2>
+        <StudyGroupSection groups={deadlineGroups} />
+        {deadlineGroups.length === 0 && (
+          <p style={{ textAlign: 'center', padding: '20px' }}>현재 마감 임박 스터디가 없습니다.</p>
         )}
       </main>
     </div>
   );
 }
 
-// 스터디 카드 UI를 위한 재사용 컴포넌트
-const StudyGroupSection = ({ groups }: { groups: StudyGroup[] }) => (
+// 일반 스터디 카드 UI (StudyGroupListResponse 기반)
+const StudyGroupSection = ({ groups }: { groups: StudyGroupListResponse[] }) => (
   <div className="study-group-grid">
     {groups.length > 0 ? (
       groups.map(group => (
@@ -81,15 +93,46 @@ const StudyGroupSection = ({ groups }: { groups: StudyGroup[] }) => (
             <p className="card-description">{group.topic}</p>
             <div className="card-chips">
               <span className="chip">리더: {group.creatorNickname}</span>
-              <span className="chip">마감: {group.recruitmentDeadline}</span>
+              <span className="chip">
+                마감: {group.recruitmentDeadline ? new Date(group.recruitmentDeadline).toLocaleDateString() : '미정'}
+              </span>
             </div>
           </div>
         </Link>
       ))
     ) : (
-      <p style={{ padding: '20px' }}>해당 스터디가 없습니다.</p>
+      null
     )}
   </div>
 );
+
+// 추천 스터디 카드 UI (RecommendedStudyGroup 기반)
+const RecommendedStudyGroupSection = ({ groups }: { groups: RecommendedStudyGroup[] }) => (
+  <div className="study-group-grid">
+    {groups.length > 0 ? (
+      groups.map(group => (
+        <Link to={`/study/${group.id}`} key={group.id} className="study-group-card">
+          <div className="card-content">
+            <h3 className="card-title">{group.title}</h3>
+            <p className="card-description">{group.topic}</p>
+            <div className="card-chips">
+              <span className="chip">리더: {group.creatorNickname}</span>
+              <span className="chip">
+                마감: {group.recruitmentDeadLine ? new Date(group.recruitmentDeadLine).toLocaleDateString() : '미정'}
+              </span>
+              {/* 추천 점수가 있다면 표시 */}
+              {group.matchScore !== undefined && (
+                <span className="chip match-score">매칭: {group.matchScore}%</span>
+              )}
+            </div>
+          </div>
+        </Link>
+      ))
+    ) : (
+      null
+    )}
+  </div>
+);
+
 
 export default HomePage;

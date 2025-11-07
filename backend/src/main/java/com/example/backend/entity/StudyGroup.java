@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -95,10 +96,19 @@ public class StudyGroup {
         if (requestDto.getDescription() != null) this.description = requestDto.getDescription();
         if (requestDto.getGoal() != null) this.goal = requestDto.getGoal();
         if (requestDto.getMemberCount() != null) this.memberCount = requestDto.getMemberCount();
-        if (requestDto.getRecruitmentDeadLine() != null) this.recruitmentDeadline = requestDto.getRecruitmentDeadLine();
+        if (requestDto.getRecruitmentDeadline() != null) this.recruitmentDeadline = requestDto.getRecruitmentDeadline();
         if (requestDto.getStudyStyle() != null) this.studyStyle = requestDto.getStudyStyle();
         if (requestDto.getRegion() != null) this.region = requestDto.getRegion();
+    }
 
+    // 태그를 설정/교체하는 메서드 (서비스에서 호출)
+    public void setTags(List<Tag> newTags) {
+        this.studyGroupTags.clear(); // 기존 태그 모두 제거 (DB에서도 삭제됨)
+        if (newTags != null && !newTags.isEmpty()) {
+            for (Tag tag : newTags) {
+                addStudyGroupTag(new StudyGroupTag(this, tag));
+            }
+        }
     }
 
     public void addStudyGroupTag(StudyGroupTag studyGroupTag) {
@@ -106,5 +116,9 @@ public class StudyGroup {
         if (studyGroupTag.getStudyGroup() != this) { // 무한 루프 방지
             studyGroupTag.setStudyGroup(this);
         }
+    }
+
+    public int getCurrentMemberCount() {
+        return this.studyMembers.size();
     }
 }

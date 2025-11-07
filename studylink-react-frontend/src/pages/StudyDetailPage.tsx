@@ -1,21 +1,21 @@
-// src/pages/StudyDetailPage.tsx
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getStudyGroupDetail, type StudyGroupDetail, applyToStudyGroup, type ApplicationData } from '../api/apiService';
+import { getStudyGroupDetail, type StudyGroupDetailResponse, applyToStudyGroup } from '../api/apiService';
 import { useAuth } from '../contexts/AuthContext';
-import './StudyDetailPage.css'; // 👈 CSS 파일 import
+import './StudyDetailPage.css'; 
+import { AxiosError } from 'axios';
 
 function StudyDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAuthenticated, getUserId } = useAuth();
-  const [studyGroup, setStudyGroup] = useState<StudyGroupDetail | null>(null);
+  const [studyGroup, setStudyGroup] = useState<StudyGroupDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [applicationMessage, setApplicationMessage] = useState('');
 
-  const currentUserId = getUserId(); // 👈 현재 로그인한 사용자의 ID
-  const isGroupCreator = studyGroup?.creatorId === currentUserId; // 👈 그룹장 여부 확인
+  const currentUserId = getUserId(); // 현재 로그인한 사용자의 ID
+  const isGroupCreator = studyGroup?.creatorId === currentUserId; // 그룹장 여부 확인
 
 
   useEffect(() => {
@@ -30,8 +30,9 @@ function StudyDetailPage() {
         const response = await getStudyGroupDetail(Number(id));
         setStudyGroup(response.data);
       } catch (err) {
-        console.error('스터디 상세 정보 로딩 실패:', err);
-        setError('스터디 정보를 불러오는 데 실패했습니다.');
+        const axiosError = err as AxiosError<{ message?: string }>; // 👈 여기 수정
+        console.error('스터디 상세 정보 로딩 실패:', axiosError);
+        setError(axiosError.response?.data?.message || '스터디 정보를 불러오는 데 실패했습니다.');
       } finally {
         setLoading(false);
       }
@@ -43,13 +44,14 @@ function StudyDetailPage() {
   const handleApply = async () => {
     if (!id) return;
     try {
-      const data: ApplicationData = { message: applicationMessage };
-      await applyToStudyGroup(Number(id), data);
+      
+      await applyToStudyGroup(Number(id), {message: applicationMessage} );
       alert('스터디 참여 신청이 완료되었습니다!');
       // TODO: 신청 완료 후 버튼 상태를 변경하거나 다른 UI 피드백 제공
-    } catch (err: any) {
+    } catch (err) { // AxiosError로 구체화해도 좋지만, 일단 any 유지
+      const axiosError = err as AxiosError<{ message?: string }>;
       console.error("참여 신청 실패:", err);
-      alert(err.response?.data?.message || '참여 신청에 실패했습니다.');
+      alert(axiosError.response?.data?.message || '참여 신청에 실패했습니다.');
     }
   };
 
@@ -80,9 +82,9 @@ function StudyDetailPage() {
           <p className="info-item"><strong>주제:</strong> {studyGroup.topic}</p>
           <p className="info-item"><strong>리더:</strong> {studyGroup.creatorNickname}</p>
           <p className="info-item"><strong>지역:</strong> {studyGroup.region}</p>
-          <p className="info-item"><strong>모집 마감:</strong> {studyGroup.recruitmemtDeadLine}</p>
-          <p className="info-item"><strong>모집 인원:</strong> {studyGroup.memberCount}명</p>
-          <p className="info-item"><strong>생성일:</strong> {new Date(studyGroup.createAt).toLocaleDateString()}</p>
+          <p className="info-item"><strong>모집 마감:</strong> {studyGroup.recruitmentDeadline}</p>
+          <p className="info-item"><strong>모집 인원:</strong> {studyGroup.maxMemberCount}명</p>
+          <p className="info-item"><strong>생성일:</strong> {new Date(studyGroup.createdAt).toLocaleDateString()}</p>
         </div>
 
         <div className="description-section">

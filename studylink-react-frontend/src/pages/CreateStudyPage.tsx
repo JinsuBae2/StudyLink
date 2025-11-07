@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createStudyGroup, type StudyGroupCreateRequest } from '../api/apiService';
 import { AxiosError } from 'axios';
-import './CreateStudyPage.css'; // 👈 CSS 파일 import
+import './CreateStudyPage.css';
 
 // 드롭다운 메뉴용 옵션 배열 (예시)
 const topicOptions = [
@@ -30,7 +30,7 @@ function CreateStudyPage() {
     description: '',
     goal: '',
     memberCount: 2, // 기본 최소 2명
-    studyStyle: '', // 👈 [추가] 초기값 설정
+    studyStyle: 'OFFLINE', // 👈 [추가] 초기값 설정
     recruitmentDeadline: '',
     region: '',
     tags: [],
@@ -89,7 +89,7 @@ function CreateStudyPage() {
       alert('스터디 그룹이 성공적으로 생성되었습니다!');
       navigate('/'); // 생성 후 홈 또는 마이페이지로 이동
     } catch (err) {
-      const axiosError = err as AxiosError<any>;
+      const axiosError = err as AxiosError<{ message?: string }>;
       console.error('스터디 그룹 생성 실패:', axiosError);
       setError(axiosError.response?.data?.message || '스터디 그룹 생성에 실패했습니다.');
     } finally {

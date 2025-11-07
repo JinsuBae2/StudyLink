@@ -1,9 +1,10 @@
 // src/pages/LoginPage.tsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { login } from '../api/apiService';
+import { login, type LoginRequest } from '../api/apiService';
 import { useAuth } from '../contexts/AuthContext';
 import './LoginPage.css'; // 👈 CSS 파일 import
+import type { AxiosError } from 'axios';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -14,11 +15,13 @@ function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await login(email, password);
+      const loginCredentials: LoginRequest = {email, password};
+      const response = await login(loginCredentials);
       localStorage.setItem('jwt_token', response.data.accessToken);
       authContextLogin(response.data.accessToken);
-    } catch (err: any) {
-      setError(err.response?.data?.message || '로그인 실패');
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      setError(axiosError.response?.data?.message || '로그인 실패');
     }
   };
 

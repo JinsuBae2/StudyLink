@@ -4,6 +4,7 @@ import com.example.backend.dto.studygroup.*;
 import com.example.backend.service.RecommendationService;
 import com.example.backend.service.StudyGroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,21 +22,22 @@ public class StudyGroupController {
 
     // 스터디 그룹 생성
     @PostMapping
-    public ResponseEntity<String> createStudyGroup(
+    public ResponseEntity<StudyGroupDetailResponseDto> createStudyGroup(
             @RequestBody StudyGroupCreateRequestDto requestDto,
             @AuthenticationPrincipal UserDetails userDetails
             ) {
-        studyGroupService.createStudyGroup(requestDto, userDetails);
-        return ResponseEntity.ok("스터디 그룹이 생성되었습니다.");
+        StudyGroupDetailResponseDto createdStudyGroup = studyGroupService.createStudyGroup(requestDto, userDetails);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdStudyGroup);
     }
 
     // 스터디 그룹 전체 조회
     @GetMapping
     public ResponseEntity<List<StudyGroupListResponseDto>> findAllStudyGroup(
-            @RequestParam(required = false) String region,
-            @RequestParam(required = false, defaultValue = "latest") String sort
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam(value = "sort", required = false, defaultValue = "latest") String sort,
+            @RequestParam(value = "search", required = false) String search
     ) {
-        List<StudyGroupListResponseDto> studyGroups = studyGroupService.findAllStudyGroup(region, sort);
+        List<StudyGroupListResponseDto> studyGroups = studyGroupService.findAllStudyGroup(region, sort, search);
         return ResponseEntity.ok(studyGroups);
     }
 
@@ -48,13 +50,13 @@ public class StudyGroupController {
 
     // 스터디 그룹 수정
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateStudyGroup(
+    public ResponseEntity<StudyGroupDetailResponseDto> updateStudyGroup(
             @PathVariable Long id,
             @RequestBody StudyGroupUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetails userDetails
             ) {
-        studyGroupService.updateStudyGroup(id, requestDto, userDetails);
-        return ResponseEntity.ok("스터디 그룹 정보가 수정되었습니다.");
+        StudyGroupDetailResponseDto updatedStudyGroup = studyGroupService.updateStudyGroup(id, requestDto, userDetails);
+        return ResponseEntity.ok(updatedStudyGroup);
     }
 
     // 스터디 그룹 삭제
