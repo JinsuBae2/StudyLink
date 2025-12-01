@@ -3,19 +3,19 @@
 .study-manage-container {
     max-width: 900px;
     margin: 40px auto;
-    padding: 30px;
-    background-color: #f9f9f9;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 40px;
+    background-color: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border);
 }
 
 .study-manage-container h1 {
     text-align: center;
-    color: #333;
-    margin-bottom: 30px;
-    font-size: 2.2em;
-    font-weight: 700;
+    color: var(--color-text-main);
+    margin-bottom: 40px;
+    font-size: 2.2rem;
+    font-weight: 800;
 }
 
 .manage-buttons {
@@ -23,43 +23,46 @@
     justify-content: flex-end;
     gap: 15px;
     margin-bottom: 30px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border);
     padding-bottom: 20px;
 }
 
 .edit-study-button,
 .delete-study-button {
-    padding: 12px 25px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 8px;
-    font-size: 1.05em;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
-    text-decoration: none; /* Link 태그에도 적용될 수 있도록 */
+    transition: all var(--transition-fast);
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
 .edit-study-button {
-    background-color: #007bff; /* 파란색 계열 */
+    background-color: var(--color-secondary);
     color: white;
 }
 
 .edit-study-button:hover {
-    background-color: #0056b3;
+    background-color: var(--color-text-main);
     transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
 .delete-study-button {
-    background-color: #dc3545; /* 빨간색 계열 */
-    color: white;
+    background-color: white;
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
 }
 
 .delete-study-button:hover {
-    background-color: #c82333;
+    background-color: #fef2f2;
     transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
 .applications-section {
@@ -67,113 +70,138 @@
 }
 
 .applications-section h2 {
-    color: #555;
-    font-size: 1.8em;
+    color: var(--color-text-main);
+    font-size: 1.5rem;
+    font-weight: 700;
     margin-bottom: 25px;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 2px solid var(--color-border);
     padding-bottom: 10px;
 }
 
 .application-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 24px;
     margin-bottom: 15px;
-    background-color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
+}
+
+.application-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
 }
 
 .application-card p {
     margin-bottom: 8px;
-    color: #444;
-    font-size: 1em;
+    color: var(--color-text-main);
+    font-size: 1rem;
 }
 
 .application-card strong {
-    color: #333;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    margin-right: 8px;
 }
 
 .status-pending {
-    color: #ffc107; /* 주황색 */
-    font-weight: bold;
+    color: var(--color-warning);
+    background-color: #fef3c7;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .status-accepted {
-    color: #28a745; /* 초록색 */
-    font-weight: bold;
+    color: var(--color-success);
+    background-color: #dcfce7;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .status-rejected {
-    color: #dc3545; /* 빨간색 */
-    font-weight: bold;
+    color: var(--color-error);
+    background-color: #fee2e2;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .application-actions {
-    margin-top: 15px;
+    margin-top: 20px;
     display: flex;
-    gap: 10px;
+    gap: 12px;
+    padding-top: 15px;
+    border-top: 1px dashed var(--color-border);
 }
 
 .application-actions button {
-    padding: 10px 20px;
+    padding: 8px 16px;
     border: none;
-    border-radius: 6px;
-    font-size: 0.95em;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all var(--transition-fast);
 }
 
 .accept-button {
-    background-color: #28a745;
+    background-color: var(--color-success);
     color: white;
 }
 
 .accept-button:hover {
-    background-color: #218838;
+    background-color: #059669; /* Emerald 600 */
+    transform: translateY(-1px);
 }
 
 .reject-button {
-    background-color: #6c757d;
+    background-color: var(--color-text-light);
     color: white;
 }
 
 .reject-button:hover {
-    background-color: #5a6268;
+    background-color: var(--color-text-muted);
+    transform: translateY(-1px);
 }
 
 .bottom-actions {
     text-align: center;
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid var(--color-border);
 }
 
 .back-to-detail-button {
     display: inline-block;
-    padding: 12px 25px;
-    background-color: #6c757d;
-    color: white;
-    border-radius: 8px;
+    padding: 12px 24px;
+    background-color: var(--color-bg-input);
+    color: var(--color-text-main);
+    border-radius: var(--radius-md);
     text-decoration: none;
-    font-size: 1.05em;
+    font-size: 1rem;
     font-weight: 600;
-    transition: background-color 0.3s ease, transform 0.1s ease;
+    transition: all var(--transition-fast);
+    border: 1px solid var(--color-border);
 }
 
 .back-to-detail-button:hover {
-    background-color: #5a6268;
-    transform: translateY(-2px);
+    background-color: var(--color-border);
 }
 
 /* 로딩 및 에러 메시지 */
 .loading, .error, .no-data {
     text-align: center;
-    font-size: 1.2em;
-    color: #555;
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
     margin-top: 50px;
 }
 .error {
-    color: #d9534f;
+    color: var(--color-error);
     font-weight: bold;
 }

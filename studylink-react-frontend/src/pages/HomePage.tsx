@@ -1,4 +1,3 @@
-// src/pages/HomePage.tsx
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -9,11 +8,7 @@ import {
 } from '../api/apiService';
 import { useSearch } from '../contexts/SearchContext';
 import { useAuth } from '../contexts/AuthContext';
-import './HomePage.css'; // HomePage 전용 CSS 파일
-
-// 임시 히어로 이미지 (실제 사용 시 적절한 이미지 경로로 변경 필요)
-const HERO_IMAGE_URL = 'https://via.placeholder.com/1920x400/4285F4/FFFFFF?text=Enhance+Your+Every+Study+Day';
-// 실제 앱에서는 public 폴더에 이미지를 넣고 '/images/hero-bg.jpg' 등으로 사용합니다.
+import './HomePage.css';
 
 function HomePage() {
   const { searchTerm, setSearchTerm } = useSearch();
@@ -45,18 +40,15 @@ function HomePage() {
             const recommendedRes = await getRecommendedStudyGroupsV2();
             setRecommendedGroups(recommendedRes.data);
           } catch (recErr) {
-            console.warn("추천 스터디 로드 실패 (무시 가능):", recErr);
+            console.warn("Recommended studies load failed:", recErr);
             setRecommendedGroups([]);
           }
         } else {
           setRecommendedGroups([]);
         }
       } catch (err) {
-        console.error("홈페이지 데이터 로딩 실패:", err);
-        setError('스터디 목록을 불러오는 데 실패했습니다.');
-        setPopularGroups([]);
-        setDeadlineGroups([]);
-        setRecommendedGroups([]);
+        console.error("Home data load failed:", err);
+        setError('Failed to load study groups.');
       } finally {
         setLoading(false);
       }
@@ -71,118 +63,137 @@ function HomePage() {
     }
   }, [searchTerm, navigate, setSearchTerm]);
 
-  if (loading) return <div className="loading-spinner">로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <div className="loading-container"><div className="spinner"></div></div>;
+  if (error) return <div className="error-container">{error}</div>;
 
   return (
-    <div className="home-wrapper"> {/* 전체 페이지 감싸는 래퍼 */}
-      {/* 🚀 메인 히어로 섹션 */}
-      <section className="hero-section" style={{ backgroundImage: `url(${HERO_IMAGE_URL})` }}>
-        <div className="hero-content">
-          <h1 className="hero-title">당신의 학습 여정을<br/>StudyLink와 함께 성장시키세요</h1>
-          <p className="hero-subtitle">최고의 스터디 그룹을 찾아 학습 효율을 극대화하세요.</p>
-          <Link to="/create-study" className="hero-cta-button">
-            새로운 스터디 시작하기 <i className="fas fa-arrow-right"></i>
-          </Link>
+    <div className="home-page">
+      {/* Hero Section */}
+      <section className="hero">
+        <div className="container hero-content">
+          <h1 className="hero-title">
+            당신의 완벽한 <span className="text-primary">스터디 그룹</span>을 찾아보세요
+          </h1>
+          <p className="hero-subtitle">
+            같은 목표를 가진 사람들과 연결되어 지식을 공유하고 함께 성장하세요.
+            StudyLink와 함께 목표를 달성하는 수천 명의 학생들과 함께하세요.
+          </p>
+          <div className="hero-actions">
+            <Link to="/study/create" className="btn btn-primary text-lg px-6 py-3">
+              스터디 만들기
+            </Link>
+            <Link to="/search" className="btn btn-outline text-lg px-6 py-3">
+              전체 둘러보기
+            </Link>
+          </div>
         </div>
       </section>
 
-      <main className="main-content-area"> {/* 기존 main-content를 감싸는 새로운 영역 */}
-        {/* ✨ 맞춤 추천 스터디 섹션 */}
-        <section className="study-section">
-          <h2 className="section-title"><i className="fas fa-star section-icon"></i> 맞춤 추천 스터디</h2>
-          { !isAuthenticated ? (
-            <div className="empty-state-card">
-              <i className="fas fa-lock fa-3x empty-state-icon"></i>
-              <p>로그인하시면 당신만을 위한 맞춤 스터디를 추천해 드려요!</p>
-              <Link to="/login" className="primary-button">로그인 하기</Link>
+      <div className="container main-content">
+        {/* Recommended Section */}
+        <section className="section">
+          <div className="section-header">
+            <h2 className="section-title">맞춤 추천 스터디</h2>
+            <Link to="/search?sort=recommended" className="section-link">전체보기</Link>
+          </div>
+          
+          {!isAuthenticated ? (
+            <div className="empty-state">
+              <div className="empty-icon">🔒</div>
+              <h3>로그인하고 추천 스터디를 확인하세요</h3>
+              <p>관심사에 맞는 스터디 그룹을 추천해 드립니다.</p>
+              <Link to="/login" className="btn btn-primary mt-4">로그인</Link>
+            </div>
+          ) : recommendedGroups.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recommendedGroups.map(group => (
+                <StudyCard key={group.id} group={group} type="recommended" />
+              ))}
             </div>
           ) : (
-            recommendedGroups.length > 0 ? (
-              <StudyGroupCardGrid groups={recommendedGroups} type="recommended" />
-            ) : (
-              <div className="empty-state-card">
-                <i className="fas fa-exclamation-circle fa-3x empty-state-icon"></i>
-                <p>아직 추천 스터디가 없습니다.<br/>관심사를 추가하면 더 좋은 추천을 받을 수 있어요!</p>
-                <Link to="/mypage" className="secondary-button">관심사 설정</Link>
-              </div>
-            )
+            <div className="empty-state">
+              <div className="empty-icon">🎯</div>
+              <h3>아직 추천 스터디가 없습니다</h3>
+              <p>마이페이지에서 관심사를 업데이트하고 맞춤 추천을 받아보세요.</p>
+              <Link to="/mypage" className="btn btn-outline mt-4">관심사 설정</Link>
+            </div>
           )}
         </section>
 
-        {/* 🔥 인기 스터디 섹션 */}
-        <section className="study-section">
-          <h2 className="section-title"><i className="fas fa-fire section-icon"></i> 인기 스터디</h2>
+        {/* Popular Section */}
+        <section className="section">
+          <div className="section-header">
+            <h2 className="section-title">인기 스터디</h2>
+            <Link to="/search?sort=popular" className="section-link">전체보기</Link>
+          </div>
           {popularGroups.length > 0 ? (
-            <StudyGroupCardGrid groups={popularGroups} type="general" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {popularGroups.map(group => (
+                <StudyCard key={group.id} group={group} />
+              ))}
+            </div>
           ) : (
-            <div className="empty-state-card">
-              <i className="fas fa-search-minus fa-3x empty-state-icon"></i>
-              <p>현재 인기 스터디가 없습니다.<br/>새로운 스터디를 시작해보는 건 어떠세요?</p>
-              <Link to="/study/create" className="primary-button">스터디 개설</Link>
+            <div className="empty-state">
+              <p>현재 인기 스터디가 없습니다.</p>
             </div>
           )}
         </section>
 
-        {/* ⏰ 마감 임박 스터디 섹션 */}
-        <section className="study-section">
-          <h2 className="section-title"><i className="fas fa-hourglass-half section-icon"></i> 마감 임박 스터디</h2>
+        {/* Deadline Section */}
+        <section className="section">
+          <div className="section-header">
+            <h2 className="section-title">마감 임박 스터디</h2>
+            <Link to="/search?sort=deadline" className="section-link">전체보기</Link>
+          </div>
           {deadlineGroups.length > 0 ? (
-            <StudyGroupCardGrid groups={deadlineGroups} type="general" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {deadlineGroups.map(group => (
+                <StudyCard key={group.id} group={group} isDeadline />
+              ))}
+            </div>
           ) : (
-            <div className="empty-state-card">
-              <i className="fas fa-calendar-times fa-3x empty-state-icon"></i>
-              <p>현재 마감 임박 스터디가 없습니다.</p>
+            <div className="empty-state">
+              <p>마감 임박한 스터디가 없습니다.</p>
             </div>
           )}
         </section>
-      </main>
+      </div>
     </div>
   );
 }
 
-// 스터디 카드 그리드 통합 컴포넌트
-type StudyGroupCardGridProps = {
-  groups: (StudyGroupListResponse | RecommendedStudyGroup)[];
-  type: 'general' | 'recommended';
-}
-
-const StudyGroupCardGrid = ({ groups, type }: StudyGroupCardGridProps) => (
-  <div className="study-group-grid">
-    {groups.map(group => (
-      <Link to={`/study/${group.id}`} key={group.id} className="study-group-card">
-        <div className="card-header">
-          <span className="card-topic">{group.topic}</span>
-          {/* 이미지가 있다면 여기에 추가할 수 있습니다. <img src={group.imageUrl} alt={group.title} /> */}
+// Study Card Component
+function StudyCard({ group, type, isDeadline }: { group: any, type?: string, isDeadline?: boolean }) {
+  const deadline = group.recruitmentDeadLine || group.recruitmentDeadline;
+  
+  return (
+    <Link to={`/study/${group.id}`} className="study-card">
+      <div className="card-badge">{group.topic}</div>
+      <div className="card-content">
+        <h3 className="card-title">{group.title}</h3>
+        <div className="card-meta">
+          <span className="meta-item">
+            <i className="fas fa-user"></i> {group.creatorNickname}
+          </span>
+          <span className={`meta-item ${isDeadline ? 'text-error' : ''}`}>
+            <i className="fas fa-calendar"></i> {deadline ? new Date(deadline).toLocaleDateString() : '미정'}
+          </span>
         </div>
-        <div className="card-body">
-          <h3 className="card-title">{group.title}</h3>
-          <div className="card-info-group">
-            <span className="card-info-item"><i className="fas fa-user"></i> {group.creatorNickname}</span>
-            <span className="card-info-item"><i className="fas fa-calendar-alt"></i> {
-              'recruitmentDeadLine' in group && group.recruitmentDeadLine
-                ? new Date(group.recruitmentDeadLine).toLocaleDateString()
-                : 'recruitmentDeadline' in group && group.recruitmentDeadline
-                ? new Date(group.recruitmentDeadline).toLocaleDateString()
-                : '미정'
-            }</span>
-          </div>
-        </div>
-        <div className="card-footer">
-          {type === 'recommended' && 'matchScore' in group && group.matchScore !== undefined && (
-            <div className="match-score-pill"> {/* 새로운 매칭 점수 컴포넌트 */}
-              <div
-                className="match-score-fill"
-                style={{ width: `${Math.round(group.matchScore)}%` }}
-              ></div>
-              <span className="match-score-text">매칭: {Math.round(group.matchScore)}%</span>
+        
+        {type === 'recommended' && group.matchScore && (
+          <div className="match-bar-container">
+            <div className="match-bar">
+              <div className="match-fill" style={{ width: `${group.matchScore}%` }}></div>
             </div>
-          )}
-          <button className="view-details-button">자세히 보기 <i className="fas fa-chevron-right"></i></button>
-        </div>
-      </Link>
-    ))}
-  </div>
-);
+            <span className="match-text">매칭: {Math.round(group.matchScore)}%</span>
+          </div>
+        )}
+      </div>
+      <div className="card-footer">
+        <span className="view-more">자세히 보기 <i className="fas fa-arrow-right"></i></span>
+      </div>
+    </Link>
+  );
+}
 
 export default HomePage;

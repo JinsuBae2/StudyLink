@@ -1,23 +1,21 @@
 /* src/pages/ProfileEditPage.css */
 
 .profile-edit-container {
-  min-height: calc(100vh - var(--header-height, 70px) - var(--footer-height, 50px));
+  min-height: calc(100vh - 60px);
   width: 100%;
-  background-color: var(--background-light);
-  padding: calc(var(--spacing-unit) * 6) calc(var(--spacing-unit) * 3);
-  color: var(--text-color-dark);
+  background-color: var(--color-bg-body);
+  padding: 40px 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  box-sizing: border-box;
 }
 
 .profile-edit-container > h1 {
-  font-size: 2.8rem;
+  font-size: 2.2rem;
   font-weight: 800;
-  color: var(--primary-color);
-  margin-bottom: calc(var(--spacing-unit) * 6);
+  color: var(--color-text-main);
+  margin-bottom: 40px;
   text-align: center;
   width: 100%;
   max-width: 700px;
@@ -26,34 +24,33 @@
 .profile-edit-loading,
 .profile-edit-error {
   text-align: center;
-  font-size: 1.2em;
-  color: var(--text-color-medium);
-  margin-top: calc(var(--spacing-unit) * 8);
-  padding: calc(var(--spacing-unit) * 4);
-  background-color: white;
-  border-radius: var(--border-radius-base);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+  margin-top: 50px;
+  padding: 20px;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   max-width: 400px;
   width: 100%;
 }
 
 .profile-edit-error {
-  color: var(--error-color);
+  color: var(--color-error);
   font-weight: bold;
 }
 
 .profile-edit-form {
   width: 100%;
   max-width: 700px;
-  padding: calc(var(--spacing-unit) * 6);
-  background-color: white;
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  border: 1px solid var(--border-color);
-  box-sizing: border-box;
+  padding: 40px;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  gap: calc(var(--spacing-unit) * 3);
+  gap: 24px;
 }
 
 .form-group {
@@ -62,180 +59,174 @@
 
 .form-group label {
   display: block;
-  margin-bottom: calc(var(--spacing-unit) * 1.5);
-  color: var(--text-color-medium);
+  margin-bottom: 8px;
+  color: var(--color-text-main);
   font-weight: 600;
-  font-size: 1.05em;
+  font-size: 0.95rem;
 }
 
-.form-group input[type="text"]:not(#newTagInput), /* 👈 newTagInput 제외 */
+.form-group input[type="text"]:not(#newTagInput),
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 2.5);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-small);
-    box-sizing: border-box; 
-    font-size: 1em;
-    color: var(--text-color-dark);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    background-color: white;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    color: var(--color-text-main);
+    background-color: var(--color-bg-input);
+    transition: all var(--transition-fast);
+    font-family: inherit;
 }
 
-.form-group select {
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.4c-4.8%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.7c0%204.8%201.8%209.3%205.4%2013.2l128%20127.9c3.9%203.9%209.1%205.4%2013.2%205.4s9.3-1.8%2013.2-5.4L287%2095.9a17.6%2017.6%200%200%200%205.4-13.2c0-4.9-1.8-9.3-5.4-13.3z%22%2F%3E%3C%2Fsvg%3E');
-  background-repeat: no-repeat;
-  background-position: right calc(var(--spacing-unit) * 2) center;
-  background-size: calc(var(--spacing-unit) * 3);
-  padding-right: calc(var(--spacing-unit) * 6);
-}
-
-.form-group input[type="text"]:not(#newTagInput):focus, /* 👈 newTagInput 제외 */
+.form-group input[type="text"]:not(#newTagInput):focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    border-color: var(--primary-color);
+    border-color: var(--color-primary);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .form-group textarea {
     resize: vertical;
-    min-height: calc(var(--spacing-unit) * 10);
+    min-height: 120px;
+    line-height: 1.6;
 }
 
 .error-message {
-    color: var(--error-color);
-    font-size: 0.95em;
-    margin-top: calc(var(--spacing-unit) * -1.5);
-    margin-bottom: calc(var(--spacing-unit) * 2);
+    color: var(--color-error);
+    font-size: 0.9rem;
+    margin-top: 10px;
     text-align: center;
+    padding: 10px;
+    background-color: #fef2f2;
+    border-radius: var(--radius-sm);
 }
 
 /* 🌟 태그 관련 UI 스타일 */
 .tag-input-area {
   display: flex;
-  gap: calc(var(--spacing-unit) * 1.5);
-  margin-bottom: calc(var(--spacing-unit) * 2); /* 👈 태그 칩과의 간격 */
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
-.tag-input-area input[type="text"] { /* 👈 newTagInput 스타일 */
-  flex-grow: 1; /* 👈 남은 공간 차지 */
-  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 2.5);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-small);
-  box-sizing: border-box;
-  font-size: 1em;
-  color: var(--text-color-dark);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+.tag-input-area input[type="text"] {
+  flex-grow: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--color-text-main);
+  background-color: var(--color-bg-input);
+  transition: all var(--transition-fast);
 }
 
 .tag-input-area input[type="text"]:focus {
-  border-color: var(--primary-color);
+  border-color: var(--color-primary);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .add-tag-button {
-  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3);
-  background-color: var(--primary-color); /* 👈 메인 색상 */
+  padding: 12px 20px;
+  background-color: var(--color-primary);
   color: white;
   border: none;
-  border-radius: var(--border-radius-small);
-  font-size: 0.95em;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 5px rgba(var(--primary-color-rgb), 0.1);
-  flex-shrink: 0; /* 👈 크기 줄어들지 않도록 */
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .add-tag-button:hover {
-  background-color: var(--primary-dark);
-  box-shadow: 0 4px 8px rgba(var(--primary-color-rgb), 0.2);
+  background-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-sm);
 }
 
 .tag-chips-container {
   display: flex;
-  flex-wrap: wrap; /* 👈 태그가 많아지면 다음 줄로 */
-  gap: calc(var(--spacing-unit) * 1.5);
-  min-height: calc(var(--spacing-unit) * 5); /* 👈 최소 높이 설정 */
-  align-items: center; /* 👈 태그 세로 중앙 정렬 */
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 40px;
+  align-items: center;
 }
 
 .tag-chip {
   display: inline-flex;
   align-items: center;
-  padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
-  background-color: var(--secondary-color); /* 👈 보조 색상 사용 */
-  color: white; /* 👈 또는 var(--text-color-dark) */
-  border-radius: var(--border-radius-base); /* 👈 둥근 모서리 */
-  font-size: 0.9em;
+  padding: 6px 12px;
+  background-color: var(--color-bg-input);
+  color: var(--color-text-main);
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
   font-weight: 500;
-  gap: calc(var(--spacing-unit) * 0.5); /* 👈 태그 텍스트와 삭제 버튼 사이 간격 */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  gap: 6px;
+  border: 1px solid var(--color-border);
 }
 
 .remove-tag-button {
   background: none;
   border: none;
-  color: white; /* 👈 태그 칩 색상에 맞춰 */
-  font-size: 1.1em;
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
   padding: 0;
-  margin-left: calc(var(--spacing-unit) * 0.5);
-  line-height: 1; /* 👈 X 버튼 정렬 */
-  transition: color 0.2s ease;
+  line-height: 1;
+  transition: color var(--transition-fast);
+  display: flex;
+  align-items: center;
 }
 
 .remove-tag-button:hover {
-  color: var(--error-color); /* 👈 호버 시 에러 색상 */
+  color: var(--color-error);
 }
 
 .button-group {
     display: flex;
     justify-content: center;
-    gap: calc(var(--spacing-unit) * 3);
-    margin-top: calc(var(--spacing-unit) * 5);
-    padding-top: calc(var(--spacing-unit) * 4);
-    border-top: 1px solid var(--border-color-light);
+    gap: 15px;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid var(--color-border);
 }
 
 .submit-button, .cancel-button {
-    padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
+    padding: 12px 30px;
     border: none;
-    border-radius: var(--border-radius-small);
-    font-size: 1.05em;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: all var(--transition-fast);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .submit-button {
-    background-color: var(--primary-color);
+    background-color: var(--color-primary);
     color: white;
-    box-shadow: 0 4px 10px rgba(var(--primary-color-rgb), 0.2);
 }
 
 .submit-button:hover {
-    background-color: var(--primary-dark);
-    box-shadow: 0 6px 15px rgba(var(--primary-color-rgb), 0.3);
+    background-color: var(--color-primary-hover);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
 }
 
 .cancel-button {
-    background-color: var(--text-color-light);
-    color: white;
+    background-color: white;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
 }
 
 .cancel-button:hover {
-    background-color: var(--text-color-medium);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-bg-input);
+    color: var(--color-text-main);
 }

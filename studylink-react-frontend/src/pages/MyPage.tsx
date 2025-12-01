@@ -1,4 +1,3 @@
-// src/pages/MyPage.tsx
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -8,7 +7,7 @@ import {
   getMyApplications,
   type UserProfileResponse,
   type MyStudyGroupResponse,
-  type MemberApplicationResponse, // 👈 이름 수정
+  type MemberApplicationResponse, // 👈 apiService.ts의 최신 인터페이스 이름
 } from '../api/apiService';
 import './MyPage.css';
 
@@ -17,7 +16,7 @@ function MyPage() {
   const [profile, setProfile] = useState<UserProfileResponse | null>(null);
   const [participatingGroups, setParticipatingGroups] = useState<MyStudyGroupResponse[]>([]);
   const [createdGroups, setCreatedGroups] = useState<MyStudyGroupResponse[]>([]);
-  const [applications, setApplications] = useState<MemberApplicationResponse[]>([]); // 👈 타입 수정
+  const [applications, setApplications] = useState<MemberApplicationResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -25,12 +24,14 @@ function MyPage() {
     const fetchMyPageData = async () => {
       try {
         setLoading(true);
+        // 모든 마이페이지 데이터를 병렬로 한 번에 로드
         const [profileRes, partGroupsRes, createdGroupsRes, applicationsRes] = await Promise.all([
           getMyProfile(),
           getMyParticipatingStudyGroups(),
           getMyCreatedStudyGroups(),
           getMyApplications(),
         ]);
+        
         setProfile(profileRes.data);
         setParticipatingGroups(partGroupsRes.data);
         setCreatedGroups(createdGroupsRes.data);
@@ -42,6 +43,7 @@ function MyPage() {
         setLoading(false);
       }
     };
+
     fetchMyPageData();
   }, []);
 
@@ -54,7 +56,7 @@ function MyPage() {
       <div className="mypage-box">
         <h1>마이페이지</h1>
 
-        {/* 프로필 정보 */}
+        {/* 프로필 정보 섹션 */}
         <section className="mypage-section profile-section">
           <h2>내 프로필</h2>
           <div className="profile-info-grid">
@@ -72,7 +74,7 @@ function MyPage() {
           <Link to="/profile/edit" className="edit-profile-button">프로필 수정</Link>
         </section>
 
-        {/* 내가 생성한 스터디 */}
+        {/* 내가 생성한 스터디 섹션 */}
         <section className="mypage-section">
           <h2>내가 생성한 스터디</h2>
           {createdGroups.length > 0 ? (
@@ -81,18 +83,21 @@ function MyPage() {
                 <div key={group.id} className="study-card">
                   <h3><Link to={`/study/${group.id}`} className="study-link">{group.title}</Link></h3>
                   <p>{group.topic}</p>
-                  <p>멤버: {group.currentParticipants}/{group.maxParticipants}</p>
+                  <p>멤버: {group.currentParticipants} / {group.maxParticipants}</p>
+                  <p>모집 마감: {group.recruitmentDeadline}</p>
                   <Link to={`/study/${group.id}/manage`} className="manage-link">관리하기</Link>
                 </div>
               ))}
             </div>
-          ) : ( <p>생성한 스터디가 없습니다.</p> )}
+          ) : (
+            <p>생성한 스터디가 없습니다.</p>
+          )}
           <div className="mypage-actions">
-            <Link to="/create-study" className="create-study-button">새 스터디 생성</Link>
+            <Link to="/study/create" className="create-study-button">새 스터디 생성</Link>
           </div>
         </section>
 
-        {/* 내가 참여 중인 스터디 */}
+        {/* 내가 참여 중인 스터디 섹션 */}
         <section className="mypage-section">
           <h2>내가 참여 중인 스터디</h2>
           {participatingGroups.length > 0 ? (
@@ -101,20 +106,24 @@ function MyPage() {
                 <div key={group.id} className="study-card">
                   <h3><Link to={`/study/${group.id}`} className="study-link">{group.title}</Link></h3>
                   <p>{group.topic}</p>
-                  <p>멤버: {group.currentParticipants}/{group.maxParticipants}</p>
+                  <p>멤버: {group.currentParticipants} / {group.maxParticipants}</p>
+                  <p>모집 마감: {group.recruitmentDeadline}</p>
                 </div>
               ))}
             </div>
-          ) : ( <p>참여 중인 스터디가 없습니다.</p> )}
+          ) : (
+            <p>참여 중인 스터디가 없습니다.</p>
+          )}
         </section>
 
-        {/* 내가 신청한 스터디 */}
+        {/* 내가 신청한 스터디 섹션 */}
         <section className="mypage-section">
           <h2>내가 신청한 스터디</h2>
           {applications.length > 0 ? (
             <div className="application-list">
               {applications.map(app => (
                 <div key={app.applicationId} className="application-item">
+                  {/* MemberApplicationResponse DTO 필드 사용 */}
                   <p><strong>스터디:</strong> <Link to={`/study/${app.studyGroupId}`} className="study-link">{app.studyGroupTitle}</Link></p>
                   <p><strong>신청 메시지:</strong> {app.message}</p>
                   <p><strong>상태:</strong> <span className={`status-${app.status.toLowerCase()}`}>{app.status}</span></p>
@@ -122,7 +131,9 @@ function MyPage() {
                 </div>
               ))}
             </div>
-          ) : ( <p>신청한 스터디가 없습니다.</p> )}
+          ) : (
+            <p>신청한 스터디가 없습니다.</p>
+          )}
         </section>
 
         <div className="mypage-bottom-actions">

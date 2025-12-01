@@ -14,6 +14,7 @@
  import PrivateRoute from './components/PrivateRoute';
  import Header from './components/Header';
  import Footer from './components/Footer';
+import StudyEditPage from './pages/StudyEditPage';
 
  function App() {
    return (
@@ -31,9 +32,10 @@
                {/* 보호된 라우트 */}
                <Route path="/mypage" element={<PrivateRoute><MyPage /></PrivateRoute>} />
                <Route path="/profile/edit" element={<PrivateRoute><ProfileEditPage /></PrivateRoute>} />
-               <Route path="/create-study" element={<PrivateRoute><StudyCreatePage /></PrivateRoute>} />
+               <Route path="/study/create" element={<PrivateRoute><StudyCreatePage /></PrivateRoute>} />
                <Route path="/study/:id" element={<PrivateRoute><StudyDetailPage /></PrivateRoute>} />
                <Route path="/study/:id/manage" element={<PrivateRoute><StudyManagePage /></PrivateRoute>} />
+               <Route path="/study/:id/edit" element={<PrivateRoute><StudyEditPage /></PrivateRoute>} />
              </Routes>
            </div>
            <Footer />

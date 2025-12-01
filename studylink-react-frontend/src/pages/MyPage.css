@@ -1,280 +1,217 @@
 /* src/pages/MyPage.css */
 
+/* --- 전체 레이아웃 --- */
 .mypage-container {
-  /* 👈 헤더/푸터 높이만큼 제외. 내용이 길어질 수 있으므로 min-height만 적용 */
-  min-height: calc(100vh - var(--header-height, 70px) - var(--footer-height, 50px)); 
-  background-color: var(--background-light); /* 👈 전역 변수 사용하여 밝은 배경색 적용 */
-  padding: calc(var(--spacing-unit) * 6) calc(var(--spacing-unit) * 3); /* 👈 상하좌우 여백 조정 */
-  color: var(--text-color-dark); /* 👈 기본 텍스트 색상 전역 변수 사용 */
+  min-height: calc(100vh - 60px); /* 헤더 높이 대략 계산 */
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* 👈 상단 정렬 */
-  box-sizing: border-box;
+  padding: 40px 20px;
+  background-color: var(--color-bg-body);
 }
 
 .mypage-box {
-  max-width: 1000px; 
   width: 100%;
-  padding: calc(var(--spacing-unit) * 6); /* 👈 패딩 증가 */
-  background-color: white;
-  border-radius: var(--border-radius-large); /* 👈 부드러운 모서리 */
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* 👈 그림자 강화 */
-  border: 1px solid var(--border-color); /* 👈 미묘한 테두리 추가 */
-  box-sizing: border-box;
+  max-width: 1000px;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 40px;
+  border: 1px solid var(--color-border);
 }
 
+/* --- 제목 스타일 --- */
 .mypage-box h1 {
-  font-size: 2.8rem; /* 👈 제목 폰트 크기 증가 */
-  font-weight: 800; /* 👈 폰트 두께 증가 */
-  color: var(--primary-color); /* 👈 메인 색상 적용 */
-  margin-bottom: calc(var(--spacing-unit) * 6); /* 👈 제목 아래 여백 증가 */
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--color-text-main);
   text-align: center;
+  margin-bottom: 40px;
+  letter-spacing: -0.5px;
 }
 
+/* --- 섹션 공통 스타일 --- */
 .mypage-section {
-  margin-bottom: calc(var(--spacing-unit) * 7); /* 👈 섹션 간 아래 여백 증가 */
-  padding-bottom: calc(var(--spacing-unit) * 4);
-  border-bottom: 1px solid var(--border-color-light); /* 👈 밝은 테두리 */
-}
-
-.mypage-section:last-of-type {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+  margin-bottom: 50px;
 }
 
 .mypage-section h2 {
-  font-size: 2rem; /* 👈 섹션 제목 폰트 크기 증가 */
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-color-dark);
-  margin-bottom: calc(var(--spacing-unit) * 4); /* 👈 섹션 제목 아래 여백 증가 */
-  border-left: 6px solid var(--primary-color); /* 👈 메인 페이지 섹션 제목과 유사하게 */
-  padding-left: calc(var(--spacing-unit) * 2); /* 👈 패딩 조정 */
-  display: flex; /* 👈 아이콘 등 추가 가능성을 위해 */
+  color: var(--color-text-main);
+  margin-bottom: 20px;
+  display: flex;
   align-items: center;
-  gap: calc(var(--spacing-unit));
+  gap: 10px;
 }
 
-/* 프로필 섹션 */
+/* 제목 옆에 파란색 바 포인트 */
+.mypage-section h2::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 24px;
+  background-color: var(--color-primary);
+  border-radius: 4px;
+}
+
+/* --- 프로필 정보 그리드 --- */
 .profile-info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 👈 최소 너비 증가 */
-  gap: calc(var(--spacing-unit) * 2); /* 👈 간격 증가 */
-  margin-bottom: calc(var(--spacing-unit) * 4);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 .profile-info-grid p {
-  background-color: var(--background-medium); /* 👈 중간 톤 배경색 */
-  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3); /* 👈 패딩 증가 */
-  border-radius: var(--border-radius-base); /* 👈 모서리 둥글게 */
-  border: 1px solid var(--border-color); /* 👈 테두리 */
-  font-size: 1em;
-  line-height: 1.5;
-  display: flex; /* 👈 내용 정렬을 위해 */
+  background-color: white; 
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-main);
+  font-size: 1rem;
+  display: flex;
   align-items: center;
+  border: 1px solid var(--color-border);
+  transition: border-color var(--transition-fast);
+}
+
+.profile-info-grid p:hover {
+  border-color: var(--color-primary);
 }
 
 .profile-info-grid strong {
-  color: var(--text-color-dark);
-  margin-right: calc(var(--spacing-unit) * 1.5); /* 👈 간격 증가 */
+  color: var(--color-primary);
   font-weight: 600;
+  margin-right: 12px;
+  min-width: 80px; /* 라벨 너비 고정 */
 }
 
-.edit-profile-button {
-  background-color: var(--primary-color); /* 👈 primary-button 스타일 */
-  color: white;
-  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4); /* 👈 패딩 증가 */
-  border: none;
-  border-radius: var(--border-radius-small);
-  cursor: pointer;
-  font-size: 1.05em;
-  font-weight: 600;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 10px rgba(var(--primary-color-rgb), 0.2);
-  display: inline-flex; /* 👈 중앙 정렬을 위해 */
+/* --- 버튼 스타일 (중요!) --- */
+.edit-profile-button,
+.create-study-button,
+.back-to-home-button,
+.go-back-button {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-top: calc(var(--spacing-unit) * 2); /* 👈 위 여백 추가 */
-}
-
-.edit-profile-button:hover {
-  background-color: var(--primary-dark);
-  box-shadow: 0 6px 15px rgba(var(--primary-color-rgb), 0.3);
-}
-
-/* 스터디 목록 (내가 생성/참여) */
-.study-list-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 👈 최소 너비 증가 */
-  gap: calc(var(--spacing-unit) * 4); /* 👈 간격 증가 */
-}
-
-.study-card {
-  border: 1px solid var(--border-color); /* 👈 테두리 */
-  border-radius: var(--border-radius-base);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 👈 그림자 */
-  padding: calc(var(--spacing-unit) * 3); /* 👈 패딩 증가 */
-  background-color: white;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  display: flex; /* 👈 내부 요소 정렬을 위해 */
-  flex-direction: column;
-}
-
-.study-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(var(--primary-color-rgb), 0.1);
-}
-
-.study-card h3 {
-  font-size: 1.4rem; /* 👈 제목 폰트 크기 증가 */
-  font-weight: 700;
-  margin-bottom: calc(var(--spacing-unit) * 1.5);
-  line-height: 1.3;
-}
-
-.study-card p {
-  font-size: 0.95em;
-  color: var(--text-color-medium);
-  margin-bottom: calc(var(--spacing-unit) * 1);
-}
-
-.study-link, .manage-link {
-  color: var(--primary-color); /* 👈 메인 색상 */
-  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
   font-weight: 600;
-  margin-top: calc(var(--spacing-unit) * 2); /* 👈 위 여백 증가 */
-  display: inline-block;
-  transition: color 0.2s ease;
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
 }
 
-.study-link:hover, .manage-link:hover {
-  color: var(--primary-dark);
+/* 1. 프로필 수정 버튼 (파란색) */
+.edit-profile-button {
+  background-color: var(--color-primary);
+  color: white;
+  margin-top: 10px;
+}
+.edit-profile-button:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 2. 스터디 생성 버튼 (강조색) */
+.create-study-button {
+  background-color: var(--color-primary); /* 일관성을 위해 primary 사용 */
+  color: white;
+}
+.create-study-button:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 3. 홈으로 버튼 (보조색) */
+.back-to-home-button {
+  background-color: var(--color-secondary);
+  color: white;
+}
+.back-to-home-button:hover {
+  background-color: var(--color-text-main);
+}
+
+/* 4. 뒤로가기 버튼 (연한 회색) */
+.go-back-button {
+  background-color: var(--color-bg-input);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+}
+.go-back-button:hover {
+  background-color: var(--color-border);
+}
+
+/* --- 하단 버튼 영역 --- */
+.mypage-actions,
+.mypage-bottom-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+/* --- 스터디 카드 그리드 --- */
+.study-list-grid,
+.application-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.study-card,
+.application-item {
+  background-color: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.study-card:hover,
+.application-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
+}
+
+.study-card h3,
+.application-item h3 {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+  color: var(--color-text-main);
+}
+
+.study-link {
+  color: var(--color-text-main);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color var(--transition-fast);
+}
+.study-link:hover {
+  color: var(--color-primary);
+}
+
+.manage-link {
+  display: inline-block;
+  margin-top: 15px;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.manage-link:hover {
   text-decoration: underline;
 }
 
-.mypage-actions {
-  display: flex;
-  justify-content: center; /* 👈 버튼 중앙 정렬 */
-  margin-top: calc(var(--spacing-unit) * 5);
-}
-
-.create-study-button {
-  background-color: var(--accent-color); /* 👈 새로운 액센트 색상 변수 사용 */
-  color: white; /* 👈 또는 어두운 텍스트 색상 */
-  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
-  border: none;
-  border-radius: var(--border-radius-small);
-  cursor: pointer;
-  font-size: 1.05em;
-  font-weight: 600;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 10px rgba(var(--accent-color-rgb), 0.3); /* 👈 액센트 색상 그림자 */
-  text-decoration: none; /* 👈 Link 태그일 경우 */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.create-study-button:hover {
-  background-color: var(--accent-dark);
-  box-shadow: 0 6px 15px rgba(var(--accent-color-rgb), 0.4);
-}
-
-
-/* 신청 목록 */
-.application-list {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--spacing-unit) * 3); /* 👈 간격 증가 */
-}
-
-.application-item {
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-base);
-  padding: calc(var(--spacing-unit) * 3); /* 👈 패딩 증가 */
-  background-color: var(--background-medium); /* 👈 중간 톤 배경색 */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  display: flex; /* 👈 내부 요소 정렬을 위해 */
-  flex-direction: column;
-  gap: calc(var(--spacing-unit) * 0.5); /* 👈 내부 p 태그 간 간격 */
-}
-
-.application-item p {
-  margin: 0; /* 👈 기본 마진 제거 */
-  font-size: 0.95em;
-  color: var(--text-color-dark);
-}
-
-.application-item strong {
-  color: var(--text-color-dark);
-  font-weight: 600;
-}
-
-/* 신청 상태별 색상 (전역 변수 활용) */
-.status-pending {
-  color: var(--warning-color); /* 👈 경고 색상 */
-  font-weight: bold;
-}
-.status-accepted {
-  color: var(--success-color); /* 👈 성공 색상 */
-  font-weight: bold;
-}
-.status-rejected {
-  color: var(--error-color); /* 👈 에러 색상 */
-  font-weight: bold;
-}
-
-/* 마이페이지 하단 액션 버튼 그룹 */
-.mypage-bottom-actions {
-  display: flex;
-  justify-content: center; /* 👈 버튼 중앙 정렬 */
-  gap: calc(var(--spacing-unit) * 3); /* 👈 버튼 간 간격 */
-  margin-top: calc(var(--spacing-unit) * 6);
-  padding-top: calc(var(--spacing-unit) * 4);
-  border-top: 1px solid var(--border-color-light);
-}
-
-.back-to-home-button,
-.go-back-button {
-  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
-  border: none;
-  border-radius: var(--border-radius-small);
-  font-size: 1.05em;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  text-decoration: none; /* 👈 Link 태그일 경우 */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.back-to-home-button {
-  background-color: rgb(69, 177, 52); /* 👈 보조 색상 (청록 계열) */
-  color: white;
-}
-
-.back-to-home-button:hover {
-  background-color: var(--secondary-dark);
-  box-shadow: 0 4px 10px rgba(var(--secondary-color-rgb), 0.2);
-}
-
-.go-back-button {
-  background-color: var(--text-color-light); /* 👈 연한 회색 */
-  color: white;
-}
-
-.go-back-button:hover {
-  background-color: var(--text-color-medium);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* 로딩 및 에러 메시지 스타일 */
-.mypage-container > .mypage-box[style*="red"], /* 에러 메시지 스타일 */
-.mypage-container > .mypage-box:not([style]):not(:has(h1)) { /* 로딩 메시지 스타일 */
-  text-align: center;
-  font-size: 1.2em;
-  color: var(--text-color-medium);
-  padding: calc(var(--spacing-unit) * 8);
-}
+/* --- 신청 상태 뱃지 --- */
+.status-pending { color: var(--color-warning); background-color: #fef3c7; padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; }
+.status-accepted { color: var(--color-success); background-color: #dcfce7; padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; }
+.status-rejected { color: var(--color-error); background-color: #fee2e2; padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; }

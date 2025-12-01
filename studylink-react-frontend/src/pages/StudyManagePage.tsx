@@ -79,10 +79,10 @@ function StudyManagePage() {
 
       <div className="manage-buttons">
         <Link to={`/study/${id}/edit`} className="edit-study-button">
-          스터디 정보 수정
+          <i className="fas fa-edit" style={{ marginRight: '8px' }}></i> 스터디 정보 수정
         </Link>
         <button onClick={handleDeleteStudy} className="delete-study-button">
-          스터디 삭제
+          <i className="fas fa-trash-alt" style={{ marginRight: '8px' }}></i> 스터디 삭제
         </button>
       </div>
 
@@ -91,9 +91,9 @@ function StudyManagePage() {
         {applications.length > 0 ? (
           applications.map(app => (
             <div key={app.applicationId} className="application-card">
-              <p><strong>신청자:</strong> {app.applicationId}</p>
+              <p><strong>신청자:</strong> {app.applicantNickname}</p>
               <p><strong>메시지:</strong> {app.message}</p>
-              <p><strong>상태:</strong> <span className={`status-${app.status.toLowerCase()}`}>{app.status}</span></p>
+              <p><strong>상태:</strong> <span className={`status-${app.status.toLowerCase()}`}>{app.status === 'ACCEPTED' ? '수락됨' : app.status === 'REJECTED' ? '거절됨' : '대기중'}</span></p>
               {app.status === 'PENDING' && (
                 <div className="application-actions">
                   <button onClick={() => handleProcess(app.applicationId, 'ACCEPTED')} className="accept-button">수락</button>
@@ -103,7 +103,7 @@ function StudyManagePage() {
             </div>
           ))
         ) : (
-          <p>들어온 신청이 없습니다.</p>
+          <p className="no-data">아직 신청자가 없습니다.</p>
         )}
       </section>
 

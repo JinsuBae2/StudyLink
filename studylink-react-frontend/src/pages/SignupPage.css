@@ -1,140 +1,44 @@
-/* src/pages/SignupPage.css */
+/* SignupPage.css */
 
-.signup-container {
+/* Inherit shared styles from LoginPage.css or define them here if not global */
+/* Assuming LoginPage.css styles are available or we duplicate for safety */
+
+.signup-card {
+  max-width: 600px; /* Wider for signup form */
+}
+
+.form-row {
   display: flex;
-  justify-content: center; /* 수평 중앙 정렬 */
-  align-items: center;    /* 수직 중앙 정렬 */
-  /* 👈 헤더/푸터 높이만큼 제외. 내용이 길어질 수 있으므로 min-height만 적용 */
-  min-height: calc(100vh - var(--header-height, 70px) - var(--footer-height, 50px)); 
-  width: 100%;            
-  background-color: var(--background-light); /* 👈 전역 변수 사용하여 밝은 배경색 적용 */
-  padding: calc(var(--spacing-unit) * 4) 0; /* 👈 상하 여백 추가 (내용 많을 때 스크롤 대비) */
-  box-sizing: border-box; /* 👈 패딩이 너비에 포함되도록 */
+  gap: 1rem;
 }
 
-.signup-box {
-  padding: calc(var(--spacing-unit) * 5); /* 👈 패딩 증가 */
-  background-color: white;
-  border-radius: var(--border-radius-large); /* 👈 더 부드러운 모서리 */
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); /* 👈 그림자 강화 */
-  width: 100%;
-  max-width: 580px; /* 👈 회원가입 폼은 로그인보다 약간 더 넓게 */
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-divider {
+  display: flex;
+  align-items: center;
   text-align: center;
-  box-sizing: border-box; /* 👈 패딩이 너비에 포함되도록 */
-  border: 1px solid var(--border-color); /* 👈 미묘한 테두리 추가 */
+  margin: 1rem 0;
+  color: var(--color-text-light);
+  font-size: 0.875rem;
 }
 
-.signup-box h2 {
-  font-size: 2.2rem; /* 👈 제목 폰트 크기 증가 */
-  font-weight: 800; /* 👈 제목 폰트 두께 증가 */
-  margin-bottom: calc(var(--spacing-unit) * 5); /* 👈 제목 아래 여백 증가 */
-  color: var(--text-color-dark); /* 👈 전역 변수 사용 */
+.form-divider::before,
+.form-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.input-group {
-  margin-bottom: calc(var(--spacing-unit) * 3); /* 👈 입력 그룹 아래 여백 증가 */
-  text-align: left;
+.form-divider span {
+  padding: 0 0.5rem;
 }
 
-.input-group label {
-  display: block;
-  margin-bottom: calc(var(--spacing-unit) * 1.5); /* 👈 레이블 아래 여백 조정 */
-  font-weight: 600;
-  color: var(--text-color-medium); /* 👈 전역 변수 사용 */
-  font-size: 1.05em; /* 👈 레이블 폰트 크기 약간 증가 */
-}
-
-.input-group input,
-.input-group select,
-.input-group textarea { /* 👈 select와 textarea도 동일 스타일 적용 */
-  width: 100%;
-  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 2.5); /* 👈 패딩 조정 */
-  border: 1px solid var(--border-color); /* 👈 전역 변수 사용 */
-  border-radius: var(--border-radius-small); /* 👈 입력 필드 모서리 둥글게 */
-  box-sizing: border-box; 
-  font-size: 1em;
-  color: var(--text-color-dark);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  background-color: white; /* 👈 배경색 명시 */
-  -webkit-appearance: none; /* 👈 select 기본 스타일 제거 */
-  -moz-appearance: none;
-  appearance: none;
-}
-
-/* 👈 select 드롭다운 화살표 커스텀 (필요시) */
-.input-group select {
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.4c-4.8%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.7c0%204.8%201.8%209.3%205.4%2013.2l128%20127.9c3.9%203.9%209.1%205.4%2013.2%205.4s9.3-1.8%2013.2-5.4L287%2095.9a17.6%2017.6%200%200%200%205.4-13.2c0-4.9-1.8-9.3-5.4-13.3z%22%2F%3E%3C%2Fsvg%3E');
-  background-repeat: no-repeat;
-  background-position: right calc(var(--spacing-unit) * 2) center; /* 👈 오른쪽 패딩 안으로 */
-  background-size: calc(var(--spacing-unit) * 3); /* 👈 화살표 크기 */
-  padding-right: calc(var(--spacing-unit) * 6); /* 👈 화살표 공간 확보 */
-}
-
-
-.input-group input:focus,
-.input-group select:focus,
-.input-group textarea:focus { /* 👈 모든 입력 요소에 포커스 스타일 적용 */
-  outline: none;
-  border-color: var(--primary-color); 
-  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2); 
-}
-
-/* 👈 텍스트 에어리어 높이 조정 */
-.input-group textarea {
-    resize: vertical; /* 세로로만 크기 조절 허용 */
-    min-height: calc(var(--spacing-unit) * 10); /* 최소 높이 */
-}
-
-
-.signup-button {
-  width: 100%;
-  padding: calc(var(--spacing-unit) * 2.5); /* 👈 버튼 패딩 증가 */
-  background-color: var(--success-color); /* 👈 회원가입 버튼은 초록색 계열로 */
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-small); 
-  font-size: 1.1em; 
-  font-weight: 700; 
-  cursor: pointer;
-  margin-top: calc(var(--spacing-unit) * 4); 
-  box-shadow: 0 4px 10px rgba(var(--success-color-rgb), 0.3); /* 👈 초록색 계열 그림자 */
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.signup-button:hover {
-  background-color: var(--success-dark); /* 👈 호버 시 초록색 어둡게 */
-  box-shadow: 0 6px 15px rgba(var(--success-color-rgb), 0.4); 
-}
-
-.error-message {
-  color: var(--error-color); 
-  margin-bottom: calc(var(--spacing-unit) * 3); 
-  font-size: 0.95em;
-  text-align: center;
-}
-
-.success-message {
-  color: var(--success-color); /* 👈 전역 변수 사용 */
-  margin-bottom: calc(var(--spacing-unit) * 3);
-  font-size: 0.95em;
-  text-align: center;
-  font-weight: 600;
-}
-
-.login-redirect-link {
-  margin-top: calc(var(--spacing-unit) * 4); 
-  font-size: 0.95em;
-  color: var(--text-color-medium); 
-}
-
-.login-redirect-link a {
-  color: var(--primary-color); 
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s ease;
-}
-
-.login-redirect-link a:hover {
-  color: var(--primary-dark); 
-  text-decoration: underline; 
+@media (max-width: 640px) {
+  .form-row {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
 }

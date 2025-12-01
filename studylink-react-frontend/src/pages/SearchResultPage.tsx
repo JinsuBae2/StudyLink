@@ -47,7 +47,7 @@ function SearchResultPage() {
 
   return (
     <div className="search-result-container">
-      <h1 className="search-result-title">'{query}' 에 대한 검색 결과</h1>
+      <h1 className="search-result-title">'{query}' 검색 결과</h1>
       {searchResults.length > 0 ? (
         <div className="search-result-grid">
           {searchResults.map(group => (
@@ -66,7 +66,7 @@ function SearchResultPage() {
           ))}
         </div>
       ) : (
-        <p className="no-results-message">'{query}' 에 대한 검색 결과가 없습니다.</p>
+        <p className="no-results-message">'{query}'에 대한 검색 결과가 없습니다.</p>
       )}
     </div>
   );
