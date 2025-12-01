@@ -22,7 +22,7 @@ function SearchResultPage() {
       setLoading(true);
       setError(null);
       try {
-        // 백엔드에서 검색어를 처리하도록 API 호출
+        // 검색어가 없으면 전체 목록 조회, 있으면 검색어로 조회
         const response = await getStudyGroups({ search: query });
         setSearchResults(response.data);
       } catch (err) {
@@ -34,12 +34,7 @@ function SearchResultPage() {
       }
     };
 
-    if (query) { // 검색어가 있을 때만 검색 실행
-      fetchSearchResults();
-    } else { // 검색어가 없으면 결과를 비우고 로딩 해제
-      setSearchResults([]);
-      setLoading(false);
-    }
+    fetchSearchResults();
   }, [query, setSearchTerm]); // query가 변경될 때마다 재실행
 
   if (loading) return <div className="loading">검색 결과 로딩 중...</div>;
@@ -47,7 +42,7 @@ function SearchResultPage() {
 
   return (
     <div className="search-result-container">
-      <h1 className="search-result-title">'{query}' 검색 결과</h1>
+      <h1 className="search-result-title">{query ? `'${query}' 검색 결과` : '전체 스터디 목록'}</h1>
       {searchResults.length > 0 ? (
         <div className="search-result-grid">
           {searchResults.map(group => (
@@ -66,7 +61,7 @@ function SearchResultPage() {
           ))}
         </div>
       ) : (
-        <p className="no-results-message">'{query}'에 대한 검색 결과가 없습니다.</p>
+        <p className="no-results-message">{query ? `'${query}'에 대한 검색 결과가 없습니다.` : '등록된 스터디가 없습니다.'}</p>
       )}
     </div>
   );
