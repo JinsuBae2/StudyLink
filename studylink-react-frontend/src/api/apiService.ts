@@ -189,6 +189,21 @@ export interface ApplicationProcessRequest {
   status: 'ACCEPTED' | 'REJECTED';
 }
 
+// --- Comment DTOs ---
+export interface CommentRequest {
+  content: string;
+  parentId?: number;
+}
+
+export interface CommentResponse {
+  id: number;
+  content: string;
+  authorNickname: string;
+  authorId: number;
+  createdAt: string;
+  children: CommentResponse[];
+}
+
 // ==========================================================
 // API 서비스 함수들 (Controller에 100% 일치)
 // ==========================================================
@@ -252,3 +267,17 @@ export const processApplication = (groupId: number, applicationId: number, data:
   return apiClient.post(`/api/study-groups/${groupId}/applications/${applicationId}/process`, data);
 };
 
+// 댓글 목록 조회
+export const getComments = async (studyGroupId: number): Promise<AxiosResponse<CommentResponse[]>> => {
+  return await apiClient.get<CommentResponse[]>(`/api/study-groups/${studyGroupId}/comments`);
+};
+
+// 댓글 작성
+export const createComment = async (studyGroupId: number, data: CommentRequest): Promise<AxiosResponse<CommentResponse>> => {
+  return await apiClient.post<CommentResponse>(`/api/study-groups/${studyGroupId}/comments`, data);
+};
+
+// 댓글 삭제
+export const deleteComment = async (commentId: number): Promise<AxiosResponse<string>> => {
+  return await apiClient.delete(`/api/comments/${commentId}`);
+};

@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List; // List는 Set으로 변경하는 것이 좋습니다 (중복 방지)
 import java.util.Set; // 🌟 Set으로 변경
@@ -74,9 +75,12 @@ public class StudyGroup {
     private final Set<Application> applications = new HashSet<>();
 
     // StudyGroup(1) : StudyGroupTag(N)
-    // 🌟 Set<StudyGroupTag>으로 변경하는 것이 좋습니다. (중복 태그 방지 및 Set의 고유성 활용)
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<StudyGroupTag> studyGroupTags = new HashSet<>();
+
+    // 댓글 연관관계 (스터디 삭제 시 댓글도 삭제)
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Comment> comments = new ArrayList<>();
 
 
     //Builder

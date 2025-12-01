@@ -81,7 +81,7 @@ function HomePage() {
         <div className="hero-content">
           <h1 className="hero-title">당신의 학습 여정을<br/>StudyLink와 함께 성장시키세요</h1>
           <p className="hero-subtitle">최고의 스터디 그룹을 찾아 학습 효율을 극대화하세요.</p>
-          <Link to="/study/create" className="hero-cta-button">
+          <Link to="/create-study" className="hero-cta-button">
             새로운 스터디 시작하기 <i className="fas fa-arrow-right"></i>
           </Link>
         </div>

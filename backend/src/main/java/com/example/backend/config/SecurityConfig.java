@@ -44,16 +44,22 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // 1. /api/auth/ 하위 경로는 모두 허용
-                        .requestMatchers(HttpMethod.GET, "/api/study-groups/**").permitAll() // 2. 스터디 조회는 모두 허용
-                        .requestMatchers("/api/members/me/**").authenticated() // 3. 내 정보 조회는 인증 필요
-                        .requestMatchers(HttpMethod.POST, "/api/study-groups").authenticated() // 4. 스터디 생성은 인증 필요
-                        .requestMatchers("/api/study-groups/*/applications", "/api/study-groups/*/applications/**").authenticated() // 5. 스터디 신청 및 관리는 인증 필요
-                        // .requestMatchers("/api/study-groups/**").hasRole("USER") // 👈 이 줄을 주석 처리하거나 삭제합니다.
-                        // 스터디 수정/삭제 등은 개별적으로 인증이 필요하도록 Post, Put, Delete 요청에 대해서만 authenticated() 적용
-                        .requestMatchers(HttpMethod.PUT, "/api/study-groups/**").authenticated() // 스터디 수정은 인증 필요
-                        .requestMatchers(HttpMethod.DELETE, "/api/study-groups/**").authenticated() // 스터디 삭제는 인증 필요
-                        .anyRequest().authenticated() // 7. 나머지 모든 요청은 인증만 되면 허용
+                        // 1. 완전 공개 (로그인, 회원가입)
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // 2. 조회 전용 (GET 요청은 모두 허용 - 스터디 목록, 상세, 댓글 조회 등)
+                        // "/api/study-groups/**"는 하위 경로를 모두 포함하므로 댓글 조회(/comments)도 여기에 포함됩니다.
+                        .requestMatchers(HttpMethod.GET, "/api/study-groups/**").permitAll()
+
+                        // 3. 인증 필요 (나머지 모든 스터디 그룹 관련 요청)
+                        // 위에서 GET은 이미 허용되었으므로, 여기 도달하는 /api/study-groups/** 요청은
+                        // 자동으로 POST, PUT, DELETE 등이 됩니다. (스터디 생성/수정/삭제, 신청, 댓글 작성 등)
+                        .requestMatchers("/api/members/me/**").authenticated()
+                        .requestMatchers("/api/study-groups/**").authenticated()
+                        .requestMatchers("/api/comments/**").authenticated() // 댓글 삭제 등
+
+                        // 4. 나머지 모든 요청
+                        .anyRequest().authenticated()
                 );
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
