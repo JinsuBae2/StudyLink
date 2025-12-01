@@ -32,4 +32,13 @@ public interface StudyGroupRepository extends JpaRepository<StudyGroup, Long> {
     // 지역별 + 인기순
     @Query("SELECT sg FROM StudyGroup sg WHERE sg.region = :region ORDER BY SIZE(sg.studyMembers) DESC")
     List<StudyGroup> findAllByRegionOrderByPopularity(@Param("region") String region, Pageable pageable);
+
+    // 🌟 [추가] 모든 스터디 그룹과 관련된 태그, 멤버 정보 등 세부사항을 FETCH JOIN
+    @Query("SELECT DISTINCT sg FROM StudyGroup sg " +
+            "LEFT JOIN FETCH sg.studyGroupTags sgt " +
+            "LEFT JOIN FETCH sgt.tag " +
+            "LEFT JOIN FETCH sg.studyMembers sm " +
+            "LEFT JOIN FETCH sm.user " +
+            "LEFT JOIN FETCH sg.creator") // 스터디 생성자 정보도 함께 가져옴
+    List<StudyGroup> findAllWithTagsAndDetails();
 }

@@ -1,36 +1,173 @@
 /* src/index.css */
+
+/* ----------------------------------------------------------- */
+/* --- 폰트 임포트: Pretendard (한국어 지원, 현대적인 디자인) --- */
+/* ----------------------------------------------------------- */
+/* public/index.html <head> 태그에도 아래 링크 추가 권장 */
+/* <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" /> */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+
+/* ----------------------------------------------------------- */
+/* --- CSS 변수: 색상 팔레트 및 기본 스타일 정의 (파란색 계열) --- */
+/* ----------------------------------------------------------- */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* 파란색 계열 메인 색상 */
+  --primary-color: #4285F4; /* Google Blue 느낌의 활기찬 파랑 */
+  --primary-light: #6FA8FF; /* 밝은 파랑 */
+  --primary-dark: #3367D6;  /* 어두운 파랑 */
+  --primary-gradient-start: #4A90E2; /* 그라디언트 시작 */
+  --primary-gradient-end: #60BBEA;   /* 그라디언트 끝 */
+  
+  --primary-color-rgb: #60BBEA; /* 👈 이 변수는 꼭 있어야 합니다! (콤마로 구분된 RGB 값) */
 
-  /* color-scheme과 color는 제거하거나 주석 처리하여 페이지별 스타일과 충돌 방지 */
-  /* color-scheme: light dark; */
-  /* color: rgba(255, 255, 255, 0.87); */
-  /* background-color: #242424; */ /* 이 부분도 제거 */
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* 회색 계열 (텍스트, 배경, 테두리, 그림자 등) */
+  --text-color-dark: #212529;   /* 가장 어두운 텍스트 */
+  --text-color-medium: #495057; /* 일반 텍스트 */
+  --text-color-light: #868E96;  /* 보조 텍스트 (힌트, 설명 등) */
+  --background-light: #F8F9FA; /* 가장 밝은 배경 (전체 페이지 배경) */
+  --background-medium: #F1F3F5; /* 중간 배경 (카드, 모달 배경) */
+  --background-dark: #E9ECEF;   /* 어두운 배경 (구분선, 비활성화 요소) */
+  --border-color: #DEE2E6;    /* 테두리 색상 */
+  --shadow-color: rgba(0, 0, 0, 0.08); /* 부드러운 그림자 색상 */
+
+  /* 기타 상태 색상 (성공, 경고, 에러 등) */
+  --success-color: #3367D6; /* 초록색 */
+  --warning-color: #FFC107; /* 노란색 */
+  --error-color: #DC3545;   /* 빨간색 */
+
+  /* ------------------- 폰트 정의 ------------------- */
+  --font-family-primary: 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.6; /* 줄 간격 약간 넓게 */
+
+  /* ------------------- 기타 공통 스타일 ------------------- */
+  --border-radius-small: 4px;  /* 작은 요소 (버튼, 인풋) */
+  --border-radius-base: 10px;  /* 일반적인 요소 (카드, 모달) */
+  --border-radius-large: 16px; /* 더 큰 요소 또는 특별한 강조 */
+  --spacing-unit: 8px; /* 간격의 기본 단위 (8px, 16px, 24px 등) */
+  
+  /* 헤더 높이 변수 (Header.css에 정의되어 있다면 삭제해도 됩니다) */
+  --header-height: 70px; 
+
+  /* Secondary Color (보조색, 청록 계열) */
+  --secondary-color: #17a2b8; /* 기본 보조색 */
+  --secondary-color-rgb: 23, 162, 184; /* 기본 보조색의 RGB 값 */
+  --secondary-dark: #138496; /* 보조색보다 약간 어두운 색 */
 }
 
-/* 👇 이 부분이 중요! html과 body가 화면 전체를 차지하도록 */
+
+/* ----------------------------------------------------------- */
+/* --- 기본 HTML 요소 스타일 재정의 (Reset/Normalize 유사) --- */
+/* ----------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box; /* 모든 요소에 Border-box 적용 */
+}
+
 html, body, #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  min-height: 100vh; /* 화면 전체 높이를 차지하도록 */
+  min-height: 100vh; /* 뷰포트 전체 높이 */
+  /* display: flex; /* 👈 이 부분 삭제 또는 주석 처리 */
+  /* flex-direction: column; /* 👈 이 부분 삭제 또는 주석 처리 */
 }
 
-/* 기본 body 배경색을 설정하여 검은색 배경이 보이지 않도록 */
 body {
-  background-color: #f0f2f5; /* 모든 페이지의 기본 배경색 */
-  /* display, place-items, min-width도 여기서는 필요 없어. 각 페이지 컨테이너에서 처리할 거야. */
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--text-color-dark);
+  background-color: var(--background-light); /* 모든 페이지의 기본 배경색 */
+  -webkit-font-smoothing: antialiased; /* 폰트 안티앨리어싱 */
+  -moz-osx-font-smoothing: grayscale; /* 폰트 안티앨리어싱 */
+  overflow-y: scroll; /* 필요시 스크롤바 항상 표시 */
 }
 
-/* 추가적으로 Link 태그의 밑줄 제거 등 전역 스타일 */
+/* h 태그 초기화 */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-color-dark);
+  margin-top: 0;
+  margin-bottom: calc(var(--spacing-unit) * 2); /* 기본 h 태그 아래 여백 */
+  font-weight: 700; /* Bold */
+}
+
+h1 { font-size: 2.5em; }
+h2 { font-size: 2em; }
+h3 { font-size: 1.75em; }
+h4 { font-size: 1.5em; }
+h5 { font-size: 1.25em; }
+h6 { font-size: 1em; }
+
+
+/* 링크 스타일 */
 a {
-  text-decoration: none;
-  color: inherit; /* 부모 요소의 색상 상속 */
+  color: var(--primary-color);
+  text-decoration: none; /* 밑줄 제거 */
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+a:hover {
+  color: var(--primary-dark);
+  opacity: 0.8;
+}
+
+/* 버튼 기본 스타일 */
+button {
+  font-family: var(--font-family-primary);
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  font-size: var(--font-size-base);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:focus, button:active {
+    outline: none; /* 버튼 포커스 시 기본 아웃라인 제거 */
+}
+
+/* 인풋 필드 기본 스타일 */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="search"],
+textarea {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  outline: none;
+  color: var(--text-color-dark);
+  background-color: white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="search"]:focus,
+textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2); /* 포커스 시 부드러운 그림자 */
+}
+
+/* 스크롤바 스타일 (선택 사항) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-medium);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-color-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-color-medium);
 }

@@ -1,5 +1,6 @@
 package com.example.backend.dto.studygroup;
 
+import com.example.backend.entity.Career;
 import com.example.backend.entity.StudyStyle;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,5 @@ public class StudyGroupUpdateRequestDto {
     private String region;
     private StudyStyle studyStyle;
     private List<String> tags;
+    private Career requiredCareer;
 }

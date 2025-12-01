@@ -64,13 +64,13 @@ public class User {
     private final Set<StudyMember> studyMembers = new HashSet<>();
 
     @OneToMany(mappedBy = "applicant", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Application> applications = new ArrayList<>();
+    private final Set<Application> applications = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<StudyMember> studyMemberships = new ArrayList<>(); // 내가 참여하는 스터디 그룹들
+    private final Set<StudyMember> studyMemberships = new HashSet<>(); // 내가 참여하는 스터디 그룹들
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<StudyGroup> createdStudyGroups = new ArrayList<>(); // 내가 생성한 스터디 그룹들
+    private final Set<StudyGroup> createdStudyGroups = new HashSet<>(); // 내가 생성한 스터디 그룹들
 
 
 

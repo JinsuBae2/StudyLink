@@ -63,7 +63,6 @@ public class UserService {
 
         currentUser.updateProfile(requestDto);
 
-        currentUser.getUserTags().clear();
         tagService.processUserTags(currentUser, requestDto.getTags());
     }
 

@@ -4,68 +4,103 @@
   display: flex;
   justify-content: center; /* 수평 중앙 정렬 */
   align-items: center;    /* 수직 중앙 정렬 */
-  min-height: 100vh;      /* 최소 높이: 화면 전체 */
-  width: 100%;            /* 👈 [수정!] 너비는 100%로 */
-  background-color: #f0f2f5; /* 기본 배경색 (전역 CSS와 통일) */
+  min-height: calc(100vh - var(--header-height, 70px) - var(--footer-height, 50px)); /* 👈 헤더/푸터 높이만큼 제외 */
+  width: 100%;            
+  background-color: var(--background-light); /* 👈 전역 변수 사용하여 밝은 배경색 적용 */
+  padding: calc(var(--spacing-unit) * 4) 0; /* 👈 상하 여백 추가 */
+  box-sizing: border-box; /* 👈 패딩이 너비에 포함되도록 */
 }
 
 .login-box {
-  padding: 32px;
+  padding: calc(var(--spacing-unit) * 5); /* 👈 패딩 증가 */
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-large); /* 👈 더 부드러운 모서리 */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); /* 👈 그림자 강화 */
   width: 100%;
-  max-width: 400px; /* 폼의 최대 너비 제한 */
+  max-width: 440px; /* 👈 폼의 최대 너비 약간 증가 */
   text-align: center;
+  box-sizing: border-box; /* 👈 패딩이 너비에 포함되도록 */
+  border: 1px solid var(--border-color); /* 👈 미묘한 테두리 추가 */
 }
 
-
 .login-box h2 {
-  margin-bottom: 24px;
-  color: #333;
+  font-size: 2.2rem; /* 👈 제목 폰트 크기 증가 */
+  font-weight: 800; /* 👈 제목 폰트 두께 증가 */
+  margin-bottom: calc(var(--spacing-unit) * 5); /* 👈 제목 아래 여백 증가 */
+  color: var(--text-color-dark); /* 👈 전역 변수 사용 */
 }
 
 .input-group {
-  margin-bottom: 16px;
+  margin-bottom: calc(var(--spacing-unit) * 3); /* 👈 입력 그룹 아래 여백 증가 */
   text-align: left;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: calc(var(--spacing-unit) * 1.5); /* 👈 레이블 아래 여백 조정 */
   font-weight: 600;
-  color: #555;
+  color: var(--text-color-medium); /* 👈 전역 변수 사용 */
+  font-size: 1.05em; /* 👈 레이블 폰트 크기 약간 증가 */
 }
 
 .input-group input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 2.5); /* 👈 패딩 조정 */
+  border: 1px solid var(--border-color); /* 👈 전역 변수 사용 */
+  border-radius: var(--border-radius-small); /* 👈 입력 필드 모서리 둥글게 */
   box-sizing: border-box; 
+  font-size: 1em;
+  color: var(--text-color-dark);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary-color); /* 👈 포커스 시 테두리 색상 변경 */
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2); /* 👈 포커스 시 그림자 추가 */
 }
 
 .login-button {
   width: 100%;
-  padding: 12px;
-  background-color: #007bff;
+  padding: calc(var(--spacing-unit) * 2.5); /* 👈 버튼 패딩 증가 */
+  background-color: var(--primary-color); /* 👈 전역 변수 사용 */
   color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: var(--border-radius-small); /* 👈 버튼 모서리 둥글게 */
+  font-size: 1.1em; /* 👈 버튼 폰트 크기 증가 */
+  font-weight: 700; /* 👈 버튼 폰트 두께 증가 */
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: calc(var(--spacing-unit) * 4); /* 👈 버튼 위 여백 증가 */
+  box-shadow: 0 4px 10px rgba(var(--primary-color-rgb), 0.3); /* 👈 버튼 그림자 추가 */
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .login-button:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-dark); /* 👈 전역 변수 사용 */
+  box-shadow: 0 6px 15px rgba(var(--primary-color-rgb), 0.4); /* 👈 호버 시 그림자 강화 */
 }
 
 .error-message {
-  color: red;
-  margin-bottom: 16px;
+  color: var(--error-color); /* 👈 전역 변수 사용 */
+  margin-bottom: calc(var(--spacing-unit) * 3); /* 👈 에러 메시지 아래 여백 조정 */
+  font-size: 0.95em;
+  text-align: center;
 }
 
 .signup-link {
-  margin-top: 20px;
+  margin-top: calc(var(--spacing-unit) * 4); /* 👈 회원가입 링크 위 여백 증가 */
+  font-size: 0.95em;
+  color: var(--text-color-medium); /* 👈 전역 변수 사용 */
+}
+
+.signup-link a {
+  color: var(--primary-color); /* 👈 링크 색상 전역 변수 사용 */
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.signup-link a:hover {
+  color: var(--primary-dark); /* 👈 호버 시 색상 변경 */
+  text-decoration: underline; /* 👈 호버 시 밑줄 */
 }

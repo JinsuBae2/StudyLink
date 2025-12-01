@@ -1,16 +1,13 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMyProfile, updateMyProfile, type UserProfileResponse, type UserProfileUpdateRequest } from '../api/apiService';
 import { AxiosError } from 'axios';
-import './ProfileEditPage.css'; // 👈 CSS 파일 import
-
+import './ProfileEditPage.css';
 
 interface ErrorResponse {
     message: string;
-    // 다른 에러 관련 필드가 있다면 여기에 추가
-  }
+}
 
-// 드롭다운 메뉴용 옵션 배열
 const careerOptions = [
   { value: '', label: '선택 안 함' },
   { value: 'NEWBIE', label: '신입' },
@@ -30,22 +27,37 @@ function ProfileEditPage() {
   const [profile, setProfile] = useState<UserProfileResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<UserProfileUpdateRequest>({});
+  
+  // 🌟 formData의 tags는 항상 string[]으로 관리
+  const [formData, setFormData] = useState<{
+    nickname?: string;
+    career?: 'NEWBIE' | 'JUNIOR' | 'SENIOR' | '';
+    job?: string;
+    goal?: string;
+    studyStyle?: 'ONLINE' | 'OFFLINE' | 'HYBRID' | '';
+    region?: string;
+    tags?: string[]; // 🌟 tags를 UserProfileUpdateRequest 타입에 맞춰 string[] (선택적)으로 정의
+  }>({ tags: [] }); // 초기값에 tags: [] 추가하여 항상 배열임을 보장
+  
+  const [newTagInput, setNewTagInput] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await getMyProfile();
         setProfile(response.data);
-        // 폼 데이터 초기값 설정
+        
+        // 🌟 백엔드에서 받은 tags는 이미 string[]이라고 가정 (UserProfileResponse 타입에 맞춤)
+        const initialTags: string[] = response.data.tags || [];
+
         setFormData({
-          nickname: response.data.nickname,
-          career: undefined,
-          job: undefined,
-          goal: undefined,
-          studyStyle: undefined,
-          region: undefined,
-          tags: response.data.tags,
+          nickname: response.data.nickname || '',
+          career: response.data.career || '',
+          job: response.data.job || '',
+          goal: response.data.goal || '',
+          studyStyle: response.data.studyStyle || '',
+          region: response.data.region || '',
+          tags: initialTags, // 🌟 백엔드 응답 그대로 사용 (string[])
         });
       } catch (err) {
         const axiosError = err as AxiosError<ErrorResponse>; 
@@ -64,19 +76,49 @@ function ProfileEditPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const tagsString = e.target.value;
-    // 쉼표로 분리하고 공백 제거 후 배열로 변환
-    const tagsArray = tagsString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-    setFormData(prev => ({ ...prev, tags: tagsArray }));
+  const handleAddTag = () => {
+    const trimmedTag = newTagInput.trim();
+    // 🌟 formData.tags는 항상 배열이므로 안전하게 includes 사용
+    if (trimmedTag && formData.tags && !formData.tags.includes(trimmedTag)) { 
+      setFormData(prev => ({ ...prev, tags: [...prev.tags!, trimmedTag] })); // !로 non-null 단언
+      setNewTagInput('');
+    } else if (trimmedTag && !formData.tags) { // tags가 아직 undefined인 경우 (극히 드물겠지만)
+        setFormData(prev => ({ ...prev, tags: [trimmedTag] }));
+        setNewTagInput('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    // 🌟 formData.tags는 항상 배열이므로 안전하게 filter 사용
+    setFormData(prev => ({ 
+      ...prev, 
+      tags: prev.tags ? prev.tags.filter(tag => tag !== tagToRemove) : []
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateMyProfile(formData);
+      // 🌟 dataToSend는 formData와 동일한 string[] tags를 가짐
+      const dataToSend: UserProfileUpdateRequest = { 
+          nickname: formData.nickname,
+          career: formData.career || undefined,
+          job: formData.job,
+          goal: formData.goal,
+          studyStyle: formData.studyStyle || undefined,
+          region: formData.region,
+          tags: formData.tags // 🌟 변환 없이 그대로 string[] 전송
+      };
+
+  
+
+      // 빈 문자열 필드 정리 (선택 사항: 백엔드가 null을 선호한다면 처리)
+      if (dataToSend.career === undefined) delete dataToSend.career;
+      if (dataToSend.studyStyle === undefined) delete dataToSend.studyStyle;
+
+      await updateMyProfile(dataToSend);
       alert('프로필이 성공적으로 업데이트되었습니다!');
-      navigate('/mypage'); // 수정 후 마이페이지로 이동
+      navigate('/mypage');
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>; 
       console.error('프로필 업데이트 실패:', axiosError);
@@ -156,15 +198,35 @@ function ProfileEditPage() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="tags">관심 태그 (쉼표로 구분)</label>
-          <input
-            type="text"
-            id="tags"
-            name="tags"
-            value={formData.tags ? formData.tags.join(', ') : ''}
-            onChange={handleTagsChange}
-            placeholder="Java, Spring, React"
-          />
+          <label htmlFor="newTagInput">관심 태그</label>
+          <div className="tag-input-area">
+            <input
+              type="text"
+              id="newTagInput"
+              value={newTagInput}
+              onChange={(e) => setNewTagInput(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAddTag();
+                }
+              }}
+              placeholder="새 태그 입력 (예: Java)"
+            />
+            <button type="button" onClick={handleAddTag} className="add-tag-button">
+              추가
+            </button>
+          </div>
+          <div className="tag-chips-container">
+            {(formData.tags || []).map((tag, index) => ( // 🌟 formData.tags가 undefined일 경우를 대비하여 || []
+              <span key={index} className="tag-chip">
+                {tag}
+                <button type="button" onClick={() => handleRemoveTag(tag)} className="remove-tag-button">
+                  &times;
+                </button>
+              </span>
+            ))}
+          </div>
         </div>
 
         {error && <p className="error-message">{error}</p>}

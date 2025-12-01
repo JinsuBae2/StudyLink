@@ -1,55 +1,144 @@
+/* src/components/Header.css */
+
 .app-header {
   background-color: white;
-  padding: 15px 30px;
-  border-bottom: 1px solid #e0e0e0;
-  position: sticky; /* 스크롤해도 상단에 고정 */
+  padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3); /* 상하 12px, 좌우 24px */
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px var(--shadow-color); /* 부드러운 그림자 */
+  position: sticky;
   top: 0;
   z-index: 1000;
 }
 
 .header-container {
-  max-width: 1200px;
+  max-width: 1280px; /* 최대 너비 설정 */
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: calc(var(--spacing-unit) * 2); /* 요소들 간의 기본 간격 */
 }
 
 .logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #007bff;
+  font-size: 1.8rem; /* 로고 텍스트 크기 */
+  font-weight: 700; /* Bold */
+  color: var(--primary-color);
   text-decoration: none;
+  display: flex; /* 로고 이미지와 텍스트를 함께 쓸 경우 */
+  align-items: center;
 }
 
+.logo img {
+  height: 30px; /* 로고 이미지 높이 */
+  margin-right: var(--spacing-unit);
+}
+
+/* --- 검색 바 스타일 --- */
 .search-bar {
+  flex-grow: 1; /* 검색창이 남은 공간을 유연하게 차지 */
+  max-width: 500px; /* 최대 너비 제한 */
   display: flex;
-  flex-grow: 0.5; /* 검색창이 공간을 차지하도록 */
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-large); /* 더 둥근 모서리 */
+  overflow: hidden; /* input과 button의 둥근 모서리 일관성 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* 약간의 그림자 */
 }
 
 .search-bar input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 20px 0 0 20px;
-  border-right: none;
+  flex-grow: 1;
+  padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5); /* 상하 8px, 좌우 12px */
+  border: none; /* 부모에 테두리가 있으므로 제거 */
+  font-size: 0.95em;
   outline: none;
+  background-color: white;
+  color: var(--text-color-dark);
 }
 
-.search-bar button {
-  padding: 8px 15px;
-  border: 1px solid #007bff;
-  background-color: #007bff;
+.search-bar input::placeholder {
+  color: var(--text-color-light);
+}
+
+.search-button {
+  background-color: var(--primary-color);
   color: white;
-  border-radius: 0 20px 20px 0;
-  cursor: pointer;
+  padding: var(--spacing-unit) calc(var(--spacing-unit) * 2); /* 상하 8px, 좌우 16px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  font-size: 1.1em; /* 아이콘 크기 */
 }
 
-.navigation button {
-  margin-left: 15px;
-  background: none;
+.search-button:hover {
+  background-color: var(--primary-dark);
+  box-shadow: 0 2px 5px rgba(var(--primary-color-rgb), 0.3);
+}
+
+/* --- 내비게이션 버튼 스타일 --- */
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-unit); /* 버튼 간 간격 */
+}
+
+.nav-button {
+  padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2); /* 상하 8px, 좌우 16px */
+  border-radius: var(--border-radius-small); /* 버튼 모서리 둥글기 */
+  font-size: 0.95em;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none; /* Link 태그로 사용할 경우 대비 */
+  display: inline-flex; /* 텍스트가 중앙에 오도록 */
+  align-items: center;
+  justify-content: center;
+}
+
+/* 메인 액션 버튼 (로그인, 생성 등) */
+.primary-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 2px 5px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.primary-button:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  box-shadow: 0 4px 8px rgba(var(--primary-color-rgb), 0.3);
+}
+
+/* 보조 액션 버튼 (회원가입 등) */
+.secondary-button {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.secondary-button:hover {
+  background-color: var(--primary-light);
+  color: white;
+}
+
+/* 일반 내비게이션 링크/버튼 (마이페이지 등) */
+.nav-button:not(.primary-button):not(.secondary-button) {
+  background-color: transparent;
+  color: var(--text-color-medium);
   border: none;
-  font-size: 1rem;
-  cursor: pointer;
-  color: #333;
+}
+
+.nav-button:not(.primary-button):not(.secondary-button):hover {
+  color: var(--primary-color);
+  background-color: var(--background-dark); /* 호버 시 약간의 배경 */
+  border-radius: var(--border-radius-small); /* 호버 시에도 둥근 배경 */
+}
+
+/* 로그아웃 버튼 */
+.nav-button-logout {
+    background-color: var(--background-dark);
+    color: var(--text-color-medium);
+    border: 1px solid var(--border-color);
+}
+.nav-button-logout:hover {
+    background-color: var(--border-color);
+    color: var(--text-color-dark);
 }

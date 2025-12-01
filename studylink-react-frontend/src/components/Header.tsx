@@ -1,19 +1,17 @@
 // src/components/Header.tsx
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useSearch } from '../contexts/SearchContext'; // 👈 useSearch 훅 임포트
-import { useState, useEffect } from 'react'; // 👈 useState, useEffect 임포트
+import { useSearch } from '../contexts/SearchContext';
+import { useState, useEffect } from 'react';
 import './Header.css'; // Header 전용 CSS 파일
 
 function Header() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
-  const { searchTerm, setSearchTerm } = useSearch(); // 👈 SearchContext에서 searchTerm과 setSearchTerm 가져오기
+  const { searchTerm, setSearchTerm } = useSearch();
 
-  // input 필드의 현재 값을 관리할 로컬 상태 (UI에 바로 반영)
   const [localSearchInput, setLocalSearchInput] = useState<string>('');
 
-  // 전역 searchTerm이 변경될 때 localSearchInput도 업데이트
   useEffect(() => {
     setLocalSearchInput(searchTerm);
   }, [searchTerm]);
@@ -22,13 +20,12 @@ function Header() {
     setLocalSearchInput(e.target.value);
   };
 
-  const handleSearchSubmit = (e: React.FormEvent | React.MouseEvent) => {
-    e.preventDefault(); // 폼 제출의 기본 동작(페이지 새로고침) 방지
+  const handleSearchSubmit = (e: React.FormEvent) => { // MouseEvent 대신 FormEvent로 통일
+    e.preventDefault();
     if (localSearchInput.trim()) {
-      // 검색어가 있다면 검색 결과 페이지로 이동 (query 파라미터로 검색어 전달)
       navigate(`/search?query=${localSearchInput.trim()}`);
-      setLocalSearchInput(''); // 검색 후 input 필드 초기화 (필요에 따라)
-      setSearchTerm(''); // SearchContext의 searchTerm도 초기화 (SearchResultPage에서 URL로 관리)
+      setLocalSearchInput('');
+      setSearchTerm('');
     }
   };
 
@@ -41,31 +38,38 @@ function Header() {
   return (
     <header className="app-header">
       <div className="header-container">
-        <Link to="/" className="logo" onClick={() => setSearchTerm('')}> {/* 로고 클릭 시 검색어 초기화 */}
+        {/* 로고: StudyLink 텍스트를 이미지나 더 스타일리쉬한 형태로 변경 가능 */}
+        <Link to="/" className="logo" onClick={() => setSearchTerm('')}>
+          {/* <img src="/path/to/your/logo-blue.svg" alt="StudyLink Logo" /> */}
           StudyLink
         </Link>
 
+        {/* 검색창 */}
         <form onSubmit={handleSearchSubmit} className="search-bar">
           <input
             type="text"
             placeholder="관심 스터디를 검색해보세요..."
-            value={localSearchInput} // 👈 localSearchInput과 바인딩
-            onChange={handleSearchInputChange} // 👈 input 값 변경 핸들러
-            onKeyDown={handleKeyDown} // 👈 Enter 키 이벤트 핸들러
+            value={localSearchInput}
+            onChange={handleSearchInputChange}
+            onKeyDown={handleKeyDown}
           />
-          <button type="submit">검색</button> {/* 👈 type="submit" 추가 */}
+          <button type="submit" className="search-button"> {/* 클래스 추가 */}
+            <i className="fas fa-search"></i> {/* Font Awesome 검색 아이콘 */}
+            {/* <span>검색</span> // '검색' 텍스트를 원하면 이것 사용 */}
+          </button>
         </form>
 
+        {/* 내비게이션 */}
         <nav className="navigation">
           {isAuthenticated ? (
             <>
-              <button onClick={() => navigate('/mypage')}>마이페이지</button>
-              <button onClick={logout}>로그아웃</button>
+              <button onClick={() => navigate('/mypage')} className="nav-button">마이페이지</button> {/* 클래스 추가 */}
+              <button onClick={logout} className="nav-button nav-button-logout">로그아웃</button> {/* 클래스 추가 */}
             </>
           ) : (
             <>
-              <button onClick={() => navigate('/login')}>로그인</button>
-              <button onClick={() => navigate('/signup')}>회원가입</button>
+              <button onClick={() => navigate('/login')} className="nav-button primary-button">로그인</button> {/* 클래스 추가 및 primary */}
+              <button onClick={() => navigate('/signup')} className="nav-button secondary-button">회원가입</button> {/* 클래스 추가 및 secondary */}
             </>
           )}
         </nav>

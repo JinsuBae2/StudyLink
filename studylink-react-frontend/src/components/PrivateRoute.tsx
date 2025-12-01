@@ -12,7 +12,12 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
 
   // 인증 상태를 확인 중이라면 로딩 UI를 표시 (선택 사항)
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '50px' }}>로딩 중...</div>;
+    return (
+      <div style={{ textAlign: 'center', padding: '50px', backgroundColor: 'lightgray', border: '2px solid blue' }}>
+        <h1>인증 상태 확인 중...</h1>
+        <p>잠시만 기다려 주세요.</p>
+      </div>
+    );
   }
 
   // 인증된 사용자라면 요청한 자식 컴포넌트를 렌더링

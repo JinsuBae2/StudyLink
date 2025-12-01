@@ -26,6 +26,7 @@ public class StudyGroupService {
     private final StudyGroupRepository studyGroupRepository;
     private final UserRepository userRepository;
     private final TagService tagService;
+    private final RecommendationService recommendationService;
 
     // 스터디 그룹 생성
     @Transactional
@@ -44,6 +45,7 @@ public class StudyGroupService {
                 .region(requestDto.getRegion())
                 .creator(creator)
                 .studyStyle(requestDto.getStudyStyle())
+                .requiredCareer(requestDto.getRequiredCareer())
                 .build();
 
         StudyGroup savedStudyGroup = studyGroupRepository.save(newStudyGroup);
@@ -164,51 +166,27 @@ public class StudyGroupService {
         studyGroupRepository.delete(studyGroup);
     }
 
-    // 스터디 그룹 추천 목록 (v1: 점수 기반 추천 알고리즘)
+    // 🌟 [수정/확장] 스터디 그룹 추천 목록 (다차원 점수 기반 추천 알고리즘)
     @Transactional(readOnly = true)
     public List<RecommendedStudyGroupDto> recommendStudyGroups(UserDetails userDetails) {
+        // 🌟 [수정] UserRepository에 FETCH JOIN 추가 (N+1 문제 방지 및 Lazy 로딩 문제 해결)
+        // findByEmailWithDetails는 userTags, studyMemberships, createdStudyGroups를 FETCH JOIN 해야 함
         User currentUser = userRepository.findByEmailWithDetails(userDetails.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         // 사용자가 이미 속해있거나, 생성한 스터디 그룹 ID 목록을 미리 준비
-        Set<Long> excludedGroupIds = currentUser.getStudyMembers().stream()
-                                                .map(sm -> sm.getStudyGroup().getId())
-                                                .collect(Collectors.toSet());
+        Set<Long> excludedGroupIds = currentUser.getStudyMemberships().stream() // studyMembers -> studyMemberships
+                .map(sm -> sm.getStudyGroup().getId())
+                .collect(Collectors.toSet());
 
-        studyGroupRepository.findAllByCreator(currentUser)
+        currentUser.getCreatedStudyGroups() // studyGroupRepository.findAllByCreator 대신 User 엔티티의 컬렉션 활용
                 .forEach(sg -> excludedGroupIds.add(sg.getId()));
 
-        List<StudyGroup> allStudyGroups = studyGroupRepository.findAllWithTags();
+        // 🌟 [수정] 모든 스터디 그룹을 가져올 때 Tag 정보도 함께 FETCH JOIN
+        List<StudyGroup> allStudyGroups = studyGroupRepository.findAllWithTagsAndDetails(); // 새로운 메서드 필요
 
-        return allStudyGroups.stream()
-                .filter(studyGroup -> !excludedGroupIds.contains(studyGroup.getId()))
-                .map(studyGroup -> new RecommendedStudyGroupDto(studyGroup, calculateMatchScore(currentUser, studyGroup)))
-                .filter(dto -> dto.getMatchScore() > 0)
-                .sorted(Comparator.comparing(RecommendedStudyGroupDto::getMatchScore).reversed())
-                .toList();
-    }
-
-    // 추천 알고리즘 점수 계산
-    private double calculateMatchScore(User user, StudyGroup studyGroup) {
-        double score = 0;
-
-        Set<String> userTags = user.getUserTags().stream()
-                .map(userTag -> userTag.getTag().getName())
-                .collect(Collectors.toSet());
-
-        Set<String> groupTags = studyGroup.getStudyGroupTags().stream()
-                .map(studyGroupTag -> studyGroupTag.getTag().getName())
-                .collect(Collectors.toSet());
-
-        Set<String> commonTags = new HashSet<>(userTags);
-        commonTags.retainAll(groupTags);
-        score += commonTags.size() * 20.0;
-
-        if (user.getStudyStyle() != null && studyGroup.getStudyGroupTags() != null && user.getStudyStyle() == studyGroup.getStudyStyle()) {
-            score += 15;
-        }
-
-        return score;
+        // 🌟 추천 로직을 RecommendationService로 위임
+        return recommendationService.calculateAndSortRecommendations(currentUser, allStudyGroups, excludedGroupIds);
     }
 
     // 👈 [추가] 내가 참여 중인 스터디 그룹 목록 조회

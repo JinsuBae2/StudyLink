@@ -10,7 +10,7 @@
  import StudyCreatePage from './pages/CreateStudyPage';
  import StudyManagePage from './pages/StudyManagePage';
  import ProfileEditPage from './pages/ProfileEditPage';
- import SearchResultPage from './pages/SearchResultPage'; // 👈 SearchResultPage 임포트
+ import SearchResultPage from './pages/SearchResultPage'; 
  import PrivateRoute from './components/PrivateRoute';
  import Header from './components/Header';
  import Footer from './components/Footer';
@@ -26,16 +26,14 @@
                <Route path="/" element={<HomePage />} />
                <Route path="/login" element={<LoginPage />} />
                <Route path="/signup" element={<SignupPage />} />
-              <Route path="/search" element={<SearchResultPage />} /> {/* 👈 검색 결과 페이지 라우트 추가 */}
+              <Route path="/search" element={<SearchResultPage />} /> 
 
                {/* 보호된 라우트 */}
-               <Route element={<PrivateRoute children={undefined} />}>
-                 <Route path="/mypage" element={<MyPage />} />
-                 <Route path="/profile/edit" element={<ProfileEditPage />} />
-                 <Route path="/create-study" element={<StudyCreatePage />} />
-                 <Route path="/study/:id" element={<StudyDetailPage />} />
-                 <Route path="/study/:id/manage" element={<StudyManagePage />} />
-               </Route>
+               <Route path="/mypage" element={<PrivateRoute><MyPage /></PrivateRoute>} />
+               <Route path="/profile/edit" element={<PrivateRoute><ProfileEditPage /></PrivateRoute>} />
+               <Route path="/create-study" element={<PrivateRoute><StudyCreatePage /></PrivateRoute>} />
+               <Route path="/study/:id" element={<PrivateRoute><StudyDetailPage /></PrivateRoute>} />
+               <Route path="/study/:id/manage" element={<PrivateRoute><StudyManagePage /></PrivateRoute>} />
              </Routes>
            </div>
            <Footer />

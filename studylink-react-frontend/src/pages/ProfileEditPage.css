@@ -1,119 +1,241 @@
 /* src/pages/ProfileEditPage.css */
+
 .profile-edit-container {
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #f9f9f9;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: calc(100vh - var(--header-height, 70px) - var(--footer-height, 50px));
+  width: 100%;
+  background-color: var(--background-light);
+  padding: calc(var(--spacing-unit) * 6) calc(var(--spacing-unit) * 3);
+  color: var(--text-color-dark);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
 }
 
-.profile-edit-container h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 30px;
-    font-size: 2.2em;
-    font-weight: 700;
+.profile-edit-container > h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: calc(var(--spacing-unit) * 6);
+  text-align: center;
+  width: 100%;
+  max-width: 700px;
 }
 
-.profile-edit-loading, .profile-edit-error {
-    text-align: center;
-    font-size: 1.2em;
-    color: #555;
-    margin-top: 50px;
+.profile-edit-loading,
+.profile-edit-error {
+  text-align: center;
+  font-size: 1.2em;
+  color: var(--text-color-medium);
+  margin-top: calc(var(--spacing-unit) * 8);
+  padding: calc(var(--spacing-unit) * 4);
+  background-color: white;
+  border-radius: var(--border-radius-base);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  max-width: 400px;
+  width: 100%;
 }
 
 .profile-edit-error {
-    color: #d9534f;
-    font-weight: bold;
+  color: var(--error-color);
+  font-weight: bold;
 }
 
 .profile-edit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  width: 100%;
+  max-width: 700px;
+  padding: calc(var(--spacing-unit) * 6);
+  background-color: white;
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing-unit) * 3);
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 0; 
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: #555;
-    font-weight: 600;
-    font-size: 1.05em;
+  display: block;
+  margin-bottom: calc(var(--spacing-unit) * 1.5);
+  color: var(--text-color-medium);
+  font-weight: 600;
+  font-size: 1.05em;
 }
 
-.form-group input[type="text"],
+.form-group input[type="text"]:not(#newTagInput), /* 👈 newTagInput 제외 */
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 2.5);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    box-sizing: border-box; 
     font-size: 1em;
-    color: #333;
-    box-sizing: border-box; /* 패딩이 너비를 늘리지 않도록 */
-    transition: border-color 0.2s ease-in-out;
+    color: var(--text-color-dark);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: white;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
-.form-group input[type="text"]:focus,
+.form-group select {
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.4c-4.8%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.7c0%204.8%201.8%209.3%205.4%2013.2l128%20127.9c3.9%203.9%209.1%205.4%2013.2%205.4s9.3-1.8%2013.2-5.4L287%2095.9a17.6%2017.6%200%200%200%205.4-13.2c0-4.9-1.8-9.3-5.4-13.3z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right calc(var(--spacing-unit) * 2) center;
+  background-size: calc(var(--spacing-unit) * 3);
+  padding-right: calc(var(--spacing-unit) * 6);
+}
+
+.form-group input[type="text"]:not(#newTagInput):focus, /* 👈 newTagInput 제외 */
 .form-group select:focus,
 .form-group textarea:focus {
-    border-color: #007bff;
+    border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
 }
 
 .form-group textarea {
-    resize: vertical; /* 수직으로만 크기 조절 가능 */
-    min-height: 80px;
+    resize: vertical;
+    min-height: calc(var(--spacing-unit) * 10);
 }
 
 .error-message {
-    color: #dc3545;
+    color: var(--error-color);
     font-size: 0.95em;
-    margin-top: -10px; /* 폼 그룹 간격과 조화롭게 */
-    margin-bottom: 10px;
+    margin-top: calc(var(--spacing-unit) * -1.5);
+    margin-bottom: calc(var(--spacing-unit) * 2);
     text-align: center;
+}
+
+/* 🌟 태그 관련 UI 스타일 */
+.tag-input-area {
+  display: flex;
+  gap: calc(var(--spacing-unit) * 1.5);
+  margin-bottom: calc(var(--spacing-unit) * 2); /* 👈 태그 칩과의 간격 */
+}
+
+.tag-input-area input[type="text"] { /* 👈 newTagInput 스타일 */
+  flex-grow: 1; /* 👈 남은 공간 차지 */
+  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 2.5);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  box-sizing: border-box;
+  font-size: 1em;
+  color: var(--text-color-dark);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tag-input-area input[type="text"]:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.add-tag-button {
+  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3);
+  background-color: var(--primary-color); /* 👈 메인 색상 */
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-small);
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 5px rgba(var(--primary-color-rgb), 0.1);
+  flex-shrink: 0; /* 👈 크기 줄어들지 않도록 */
+}
+
+.add-tag-button:hover {
+  background-color: var(--primary-dark);
+  box-shadow: 0 4px 8px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.tag-chips-container {
+  display: flex;
+  flex-wrap: wrap; /* 👈 태그가 많아지면 다음 줄로 */
+  gap: calc(var(--spacing-unit) * 1.5);
+  min-height: calc(var(--spacing-unit) * 5); /* 👈 최소 높이 설정 */
+  align-items: center; /* 👈 태그 세로 중앙 정렬 */
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+  background-color: var(--secondary-color); /* 👈 보조 색상 사용 */
+  color: white; /* 👈 또는 var(--text-color-dark) */
+  border-radius: var(--border-radius-base); /* 👈 둥근 모서리 */
+  font-size: 0.9em;
+  font-weight: 500;
+  gap: calc(var(--spacing-unit) * 0.5); /* 👈 태그 텍스트와 삭제 버튼 사이 간격 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.remove-tag-button {
+  background: none;
+  border: none;
+  color: white; /* 👈 태그 칩 색상에 맞춰 */
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  margin-left: calc(var(--spacing-unit) * 0.5);
+  line-height: 1; /* 👈 X 버튼 정렬 */
+  transition: color 0.2s ease;
+}
+
+.remove-tag-button:hover {
+  color: var(--error-color); /* 👈 호버 시 에러 색상 */
 }
 
 .button-group {
     display: flex;
-    justify-content: flex-end; /* 버튼들을 오른쪽으로 정렬 */
-    gap: 15px;
-    margin-top: 25px;
+    justify-content: center;
+    gap: calc(var(--spacing-unit) * 3);
+    margin-top: calc(var(--spacing-unit) * 5);
+    padding-top: calc(var(--spacing-unit) * 4);
+    border-top: 1px solid var(--border-color-light);
 }
 
 .submit-button, .cancel-button {
-    padding: 12px 25px;
+    padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--border-radius-small);
     font-size: 1.05em;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .submit-button {
-    background-color: #007bff;
+    background-color: var(--primary-color);
     color: white;
+    box-shadow: 0 4px 10px rgba(var(--primary-color-rgb), 0.2);
 }
 
 .submit-button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
+    background-color: var(--primary-dark);
+    box-shadow: 0 6px 15px rgba(var(--primary-color-rgb), 0.3);
 }
 
 .cancel-button {
-    background-color: #6c757d;
+    background-color: var(--text-color-light);
     color: white;
 }
 
 .cancel-button:hover {
-    background-color: #5a6268;
-    transform: translateY(-2px);
+    background-color: var(--text-color-medium);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
