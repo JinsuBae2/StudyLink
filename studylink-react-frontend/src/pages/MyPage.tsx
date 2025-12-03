@@ -5,9 +5,11 @@ import {
   getMyParticipatingStudyGroups,
   getMyCreatedStudyGroups,
   getMyApplications,
+  getMyInterests,
   type UserProfileResponse,
   type MyStudyGroupResponse,
   type MemberApplicationResponse, // 👈 apiService.ts의 최신 인터페이스 이름
+  type StudyGroupListResponse,
 } from '../api/apiService';
 import './MyPage.css';
 
@@ -19,23 +21,26 @@ function MyPage() {
   const [applications, setApplications] = useState<MemberApplicationResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [interests, setInterests] = useState<StudyGroupListResponse[]>([]);
 
   useEffect(() => {
     const fetchMyPageData = async () => {
       try {
         setLoading(true);
         // 모든 마이페이지 데이터를 병렬로 한 번에 로드
-        const [profileRes, partGroupsRes, createdGroupsRes, applicationsRes] = await Promise.all([
+        const [profileRes, partGroupsRes, createdGroupsRes, applicationsRes, interestRes] = await Promise.all([
           getMyProfile(),
           getMyParticipatingStudyGroups(),
           getMyCreatedStudyGroups(),
           getMyApplications(),
+          getMyInterests(),
         ]);
         
         setProfile(profileRes.data);
         setParticipatingGroups(partGroupsRes.data);
         setCreatedGroups(createdGroupsRes.data);
         setApplications(applicationsRes.data);
+        setInterests(interestRes.data);
       } catch (err) {
         console.error('마이페이지 데이터 로딩 실패:', err);
         setError('데이터를 불러오는 데 실패했습니다.');
@@ -113,6 +118,25 @@ function MyPage() {
             </div>
           ) : (
             <p>참여 중인 스터디가 없습니다.</p>
+          )}
+        </section>
+
+        <section className="mypage-section">
+          <h2>찜한 스터디 <i className="fas fa-heart" style={{ color: '#ff4757', marginLeft: '5px', fontSize: '0.8em' }}></i></h2>
+          {interests.length > 0 ? (
+            <div className="study-list-grid">
+              {interests.map(study => (
+                <div key={study.id} className="study-card">
+                  <h3><Link to={`/study/${study.id}`} className="study-link">{study.title}</Link></h3>
+                  <p>{study.topic}</p>
+                  {/* StudyGroupListResponse에는 멤버 수 정보가 없어서 표시 제외하거나, 있다면 추가 */}
+                  <p>모집 마감: {study.recruitmentDeadline}</p>
+                  <Link to={`/study/${study.id}`} className="view-study-detail" style={{marginTop: '10px', display: 'inline-block', color: '#007bff', textDecoration: 'none'}}>상세보기</Link>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>찜한 스터디가 없습니다.</p>
           )}
         </section>
 

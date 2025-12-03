@@ -204,6 +204,9 @@ export interface CommentResponse {
   children: CommentResponse[];
 }
 
+
+
+
 // ==========================================================
 // API 서비스 함수들 (Controller에 100% 일치)
 // ==========================================================
@@ -280,4 +283,15 @@ export const createComment = async (studyGroupId: number, data: CommentRequest):
 // 댓글 삭제
 export const deleteComment = async (commentId: number): Promise<AxiosResponse<string>> => {
   return await apiClient.delete(`/api/comments/${commentId}`);
+};
+
+// 1. 찜하기 / 찜취소 토글
+export const toggleInterest = async (studyGroupId: number): Promise<AxiosResponse<{ isInterested: boolean }>> => {
+  // POST 요청을 보내면 백엔드에서 알아서 추가/삭제를 판단해서 결과(true/false)를 줍니다.
+  return await apiClient.post(`/api/study-groups/${studyGroupId}/interest`);
+};
+
+// 2. 내가 찜한 스터디 목록 조회
+export const getMyInterests = async (): Promise<AxiosResponse<StudyGroupListResponse[]>> => {
+  return await apiClient.get<StudyGroupListResponse[]>('/api/members/me/interests');
 };

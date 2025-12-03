@@ -6,6 +6,7 @@ import {
   getComments, 
   createComment, 
   deleteComment,
+  toggleInterest,
   type StudyGroupDetailResponse, 
   type ApplicationData,
   type CommentResponse
@@ -41,6 +42,8 @@ function StudyDetailPage() {
 
   const currentUserId = getUserId();
   const isGroupCreator = studyGroup?.creatorId === currentUserId;
+
+  const [isInterested, setIsInterested] = useState(false);
 
   // 데이터 로딩
   useEffect(() => {
@@ -124,6 +127,26 @@ function StudyDetailPage() {
     }
   };
 
+  // 찜하기 핸들러
+  const handleInterestToggle = async () => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+    if (!id) return;
+
+    try {
+      const response = await toggleInterest(Number(id));
+      const liked = response.data.isInterested;
+      setIsInterested(liked); // 백엔드 응답에 따라 상태 변경
+      if (liked) alert("관심 스터디에 등록되었습니다!");
+      else alert("관심 스터디에서 해제되었습니다.");
+    } catch (err) {
+      console.error("찜하기 실패", err);
+      alert("오류가 발생했습니다.");
+    }
+  };
+
   // 댓글 렌더링 헬퍼
   const renderCommentItem = (comment: CommentResponse, isReply = false) => {
     const avatarColor = getAvatarColor(comment.authorNickname);
@@ -200,6 +223,19 @@ function StudyDetailPage() {
           <button onClick={() => navigate(-1)} className="back-link">
             <i className="fas fa-arrow-left"></i> 목록으로
           </button>
+          <div className="title-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h1>{studyGroup.title}</h1>
+          {isAuthenticated && (
+            <button 
+              onClick={handleInterestToggle} 
+              className={`interest-btn ${isInterested ? 'active' : ''}`}
+              style={{ fontSize: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', color: isInterested ? '#ff4757' : '#ccc' }}
+            >
+              <i className={isInterested ? "fas fa-heart" : "far fa-heart"}></i>
+            </button>
+          )}
+        </div>
+
           <div className="study-tags">
              <span className={`study-status-badge ${new Date(studyGroup.recruitmentDeadline) > new Date() ? 'recruiting' : 'closed'}`}>
                 {new Date(studyGroup.recruitmentDeadline) > new Date() ? '모집중' : '마감됨'}
