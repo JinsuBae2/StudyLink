@@ -19,6 +19,7 @@ function SearchResultPage() {
   const [topic, setTopic] = useState('');
   const [studyStyle, setStudyStyle] = useState('');
   const [recruiting, setRecruiting] = useState(false);
+  const [sort, setSort] = useState(searchParams.get('sort') || ''); // 정렬 상태 추가
 
   // 주제(Topic) 입력 시 디바운싱(Debounce)을 적용하여 불필요한 API 호출을 줄일 수 있지만,
   // 현재는 사용자가 입력할 때마다 즉시 필터링되도록 구현합니다 (useEffect 의존성 배열 사용).
@@ -38,7 +39,8 @@ function SearchResultPage() {
           region: region || undefined,
           topic: topic || undefined,
           studyStyle: studyStyle || undefined,
-          recruiting: recruiting || undefined
+          recruiting: recruiting || undefined,
+          sort: sort || undefined // 정렬 추가
         });
         setSearchResults(response.data);
       } catch (err) {
@@ -51,7 +53,7 @@ function SearchResultPage() {
     };
 
     fetchSearchResults();
-  }, [query, setSearchTerm, region, topic, studyStyle, recruiting]); // 필터 변경 시 재실행
+  }, [query, setSearchTerm, region, topic, studyStyle, recruiting, sort]); // sort 추가
 
   if (loading) return <div className="loading">검색 결과 로딩 중...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -100,6 +102,13 @@ function SearchResultPage() {
           />
           모집 중만 보기
         </label>
+
+        <select value={sort} onChange={(e) => setSort(e.target.value)} className="filter-select sort-select">
+          <option value="">최신순</option>
+          <option value="viewCount">조회순</option>
+          <option value="popular">인기순 (찜)</option>
+          <option value="deadline">마감 임박순</option>
+        </select>
       </div>
 
       {searchResults.length > 0 ? (
@@ -114,6 +123,8 @@ function SearchResultPage() {
                   <span className="chip">
                     마감: {group.recruitmentDeadline ? new Date(group.recruitmentDeadline).toLocaleDateString() : '미정'}
                   </span>
+                  <span className="chip"><i className="fas fa-eye"></i> {group.viewCount}</span>
+                  <span className="chip"><i className="fas fa-heart"></i> {group.interestCount}</span>
                 </div>
               </div>
             </Link>

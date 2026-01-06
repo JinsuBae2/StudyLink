@@ -45,6 +45,10 @@ public class StudyGroup {
     @Column(name = "region")
     private String region;
 
+    // 조회수
+    @Column(name = "view_count", columnDefinition = "integer default 0", nullable = false)
+    private int viewCount = 0;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -61,7 +65,7 @@ public class StudyGroup {
     @Enumerated(EnumType.STRING)
     private StudyStyle studyStyle;
 
-    // 🌟 추가: 스터디에 필요한 경력 수준 필드
+    // 스터디에 필요한 경력 수준 필드
     @Enumerated(EnumType.STRING)
     @Column(name = "required_career")
     private Career requiredCareer; // NEWBIE, JUNIOR, SENIOR 사용
@@ -82,12 +86,16 @@ public class StudyGroup {
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Comment> comments = new ArrayList<>();
 
+    // 찜(Interest) 연관관계 (인기순 정렬을 위해 추가)
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final Set<Interest> interests = new HashSet<>();
+
 
     //Builder
     @Builder
     public StudyGroup(String title, String topic, String description,
                       String goal, int memberCount, LocalDate recruitmentDeadline,
-                      User creator, StudyStyle studyStyle, String region, // 🌟 requiredCareer 추가
+                      User creator, StudyStyle studyStyle, String region, // requiredCareer 추가
                       Career requiredCareer) {
         this.title = title;
         this.topic = topic;
@@ -98,7 +106,7 @@ public class StudyGroup {
         this.creator = creator;
         this.studyStyle = studyStyle;
         this.region = region;
-        this.requiredCareer = requiredCareer; // 🌟 필드 초기화
+        this.requiredCareer = requiredCareer; // 필드 초기화
     }
 
     public void update(StudyGroupUpdateRequestDto requestDto) {
@@ -110,22 +118,10 @@ public class StudyGroup {
         if (requestDto.getRecruitmentDeadline() != null) this.recruitmentDeadline = requestDto.getRecruitmentDeadline();
         if (requestDto.getStudyStyle() != null) this.studyStyle = requestDto.getStudyStyle();
         if (requestDto.getRegion() != null) this.region = requestDto.getRegion();
-        // 🌟 추가: requiredCareer 업데이트 로직
+        // requiredCareer 업데이트 로직
         if (requestDto.getRequiredCareer() != null) this.requiredCareer = requestDto.getRequiredCareer();
     }
 
-    // 🌟 [수정] setTags 메서드를 제거하고, TagService에서 studyGroupTags 컬렉션을 직접 관리하도록 위임합니다.
-    // User 엔티티의 userTags 처리 방식과 동일하게 맞춥니다.
-    /*
-    public void setTags(List<Tag> newTags) {
-        this.studyGroupTags.clear();
-        if (newTags != null && !newTags.isEmpty()) {
-            for (Tag tag : newTags) {
-                addStudyGroupTag(new StudyGroupTag(this, tag));
-            }
-        }
-    }
-    */
 
     public void addStudyGroupTag(StudyGroupTag studyGroupTag) {
         this.studyGroupTags.add(studyGroupTag);
@@ -136,5 +132,9 @@ public class StudyGroup {
 
     public int getCurrentMemberCount() {
         return this.studyMembers.size();
+    }
+
+    public void incrementViewCount() {
+        this.viewCount++;
     }
 }

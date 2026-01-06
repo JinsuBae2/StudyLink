@@ -100,6 +100,8 @@ export interface StudyGroupListResponse {
   creatorNickname: string;
   recruitmentDeadline: string;
   region: string;
+  viewCount: number;
+  interestCount: number;
 }
 // RecommendedStudyGroupDto (오타 'DeadLine' 포함)
 export interface RecommendedStudyGroup {
@@ -126,6 +128,8 @@ export interface StudyGroupDetailResponse {
   creatorNickname: string;
   recruitmentDeadline: string;
   createdAt: string;
+  viewCount: number;
+  interestCount: number;
 }
 // StudyGroupCreateRequestDto
 export interface StudyGroupCreateRequest {

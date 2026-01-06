@@ -94,7 +94,7 @@ function HomePage() {
         <section className="section">
           <div className="section-header">
             <h2 className="section-title">맞춤 추천 스터디</h2>
-            <Link to="/search?sort=recommended" className="section-link">전체보기</Link>
+            <Link to="/search?sort=recommended" className="view-all-btn">전체보기 <i className="fas fa-arrow-right"></i></Link>
           </div>
           
           {!isAuthenticated ? (
@@ -124,7 +124,7 @@ function HomePage() {
         <section className="section">
           <div className="section-header">
             <h2 className="section-title">인기 스터디</h2>
-            <Link to="/search?sort=popular" className="section-link">전체보기</Link>
+            <Link to="/search?sort=popular" className="view-all-btn">전체보기 <i className="fas fa-arrow-right"></i></Link>
           </div>
           {popularGroups.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -143,7 +143,7 @@ function HomePage() {
         <section className="section">
           <div className="section-header">
             <h2 className="section-title">마감 임박 스터디</h2>
-            <Link to="/search?sort=deadline" className="section-link">전체보기</Link>
+            <Link to="/search?sort=deadline" className="view-all-btn">전체보기 <i className="fas fa-arrow-right"></i></Link>
           </div>
           {deadlineGroups.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

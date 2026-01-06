@@ -54,14 +54,24 @@
   color: var(--color-text-main);
 }
 
-.section-link {
+.view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
   color: var(--color-primary);
   font-weight: 600;
   font-size: 0.9375rem;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-normal);
 }
 
-.section-link:hover {
-  text-decoration: underline;
+.view-all-btn:hover {
+  background-color: var(--color-primary);
+  color: white;
+  text-decoration: none;
 }
 
 /* Study Card */

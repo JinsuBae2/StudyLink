@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ public class RecommendationService {
         // 2. 각 스터디 그룹과의 다차원 매칭 점수 계산
         return allStudyGroups.stream()
                 .filter(studyGroup -> !excludedGroupIds.contains(studyGroup.getId())) // 이미 가입/생성한 스터디 제외
+                .filter(studyGroup -> studyGroup.getRecruitmentDeadline() == null || !studyGroup.getRecruitmentDeadline().isBefore(LocalDate.now())) // 🌟 모집 마감된 스터디 제외
                 .map(studyGroup -> {
                     double finalScore = calculateMultiDimensionalMatchScore(
                             currentUser, studyGroup, idfVocabulary, userTfIdfVector);

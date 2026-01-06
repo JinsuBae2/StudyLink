@@ -24,7 +24,10 @@ public class StudyGroupDetailResponseDto {
     private final Long creatorId;      // 그룹장 ID
     private final String creatorNickname;
     private final LocalDate recruitmentDeadline;
+
     private final LocalDateTime createdAt;
+    private final int viewCount;
+    private final int interestCount;
 
     public StudyGroupDetailResponseDto(StudyGroup studyGroup) {
         this.id = studyGroup.getId();
@@ -43,5 +46,7 @@ public class StudyGroupDetailResponseDto {
         this.creatorNickname = studyGroup.getCreator().getNickname();
         this.recruitmentDeadline = studyGroup.getRecruitmentDeadline();
         this.createdAt = studyGroup.getCreatedAt();
+        this.viewCount = studyGroup.getViewCount();
+        this.interestCount = studyGroup.getInterests().size();
     }
 }

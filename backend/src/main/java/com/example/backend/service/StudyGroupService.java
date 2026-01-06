@@ -85,13 +85,17 @@ public class StudyGroupService {
             if (hasRegion) {
                 studyGroups = switch (sort) {
                     case "popular" -> studyGroupRepository.findAllByRegionOrderByPopularity(region, PageRequest.of(0, 100)); // 조회 제한 수 증가 (10 -> 100)
-                    case "deadline" -> studyGroupRepository.findAllByRegionAndRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(region, LocalDate.now());
+                    case "deadline" -> studyGroupRepository.findAllByRegionAndRecruitmentDeadlineBetweenOrderByRecruitmentDeadlineAsc(
+                            region, LocalDate.now(), LocalDate.now().plusDays(7)); // 1주일 이내 마감
+                    case "viewCount" -> studyGroupRepository.findAllByRegionOrderByViewCount(region, PageRequest.of(0, 100)); // 조회순
                     default -> studyGroupRepository.findAllByRegionOrderByIdDesc(region);
                 };
             } else {
                 studyGroups = switch (sort) {
                     case "popular" -> studyGroupRepository.findAllOrderByPopularity(PageRequest.of(0, 100));
-                    case "deadline" -> studyGroupRepository.findAllByRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(LocalDate.now());
+                    case "deadline" -> studyGroupRepository.findAllByRecruitmentDeadlineBetweenOrderByRecruitmentDeadlineAsc(
+                            LocalDate.now(), LocalDate.now().plusDays(7)); // 1주일 이내 마감
+                    case "viewCount" -> studyGroupRepository.findAllOrderByViewCount(PageRequest.of(0, 100)); // 조회순
                     default -> studyGroupRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
                 };
             }
@@ -136,10 +140,14 @@ public class StudyGroupService {
 
 
     // 스터디 그룹 단일 조회
-    @Transactional(readOnly = true)
+    @Transactional
     public StudyGroupDetailResponseDto findStudyGroupById(Long groupId) {
         StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 스터디 그룹을 찾을 수 없습니다."));
+        
+        // 조회수 증가
+        studyGroup.incrementViewCount();
+        
         return new StudyGroupDetailResponseDto(studyGroup);
     }
 

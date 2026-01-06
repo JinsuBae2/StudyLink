@@ -1,5 +1,13 @@
 /* src/pages/SearchResultPage.css */
 
+.sort-select {
+  min-width: 140px;
+  background-color: white;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
 .search-result-container {
     padding: 40px 20px;
     max-width: 1200px;

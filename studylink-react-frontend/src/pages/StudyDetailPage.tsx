@@ -249,6 +249,10 @@ function StudyDetailPage() {
             <span className="meta-item"><i className="fas fa-user-circle"></i> {studyGroup.creatorNickname}</span>
             <span className="meta-divider">|</span>
             <span className="meta-item"><i className="far fa-calendar-alt"></i> {new Date(studyGroup.createdAt).toLocaleDateString()} 개설</span>
+            <span className="meta-divider">|</span>
+            <span className="meta-item"><i className="fas fa-eye"></i> {studyGroup.viewCount}회 조회</span>
+            <span className="meta-divider">|</span>
+            <span className="meta-item"><i className="fas fa-heart"></i> {studyGroup.interestCount}명 찜</span>
           </div>
         </div>
       </div>
