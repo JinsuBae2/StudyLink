@@ -2,10 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.dto.studygroup.RecommendedStudyGroupDto;
 import com.example.backend.entity.*;
-import com.example.backend.repository.StudyGroupRepository;
-import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,26 +12,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RecommendationService {
-
-    private final UserRepository userRepository;
-    private final StudyGroupRepository studyGroupRepository;
-    // 🌟 TagService를 주입받아 태그 이름을 정규화할 때 사용
     private final TagService tagService;
 
-    // 🌟 추천 가중치 설정 (조정 가능)
     private static final double GOAL_WEIGHT = 0.4;        // 목표 텍스트 유사도
     private static final double TAG_WEIGHT = 0.3;         // 태그 일치도
     private static final double CAREER_WEIGHT = 0.15;     // 경력 적합도
     private static final double STUDY_STYLE_WEIGHT = 0.1; // 학습 스타일 일치도
     private static final double REGION_WEIGHT = 0.05;     // 지역 일치도 (오프라인/하이브리드만 해당)
 
-    private static final Set<String> STOP_WORDS = Set.of(
-            "은", "는", "이", "가", "을", "를", "으로", "로", "와", "과", "도", "만", "좀", "잘", "더",
-            "가장", "아주", "정말", "바로", "그리고", "그래서", "그러나", "하지만", "또는", "및", "즉", "등",
-            "것", "수", "있습니다", "합니다", "이다", "위해", "대한", "통해", "개발", "스터디", "목표" // "합니다"가 중복되지 않도록 확인
-    );
-
-    // 🌟 [수정] recommendGroupsByContent -> calculateAndSortRecommendations
     @Transactional(readOnly = true)
     public List<RecommendedStudyGroupDto> calculateAndSortRecommendations(
             User currentUser,
@@ -61,7 +46,7 @@ public class RecommendationService {
                 .collect(Collectors.toList());
     }
 
-    // 🌟 [새로 추가] 다차원 매칭 점수 계산 메서드
+    // 다차원 매칭 점수 계산 메서드
     private double calculateMultiDimensionalMatchScore(
             User user, StudyGroup studyGroup,
             Map<String, Double> idfVocabulary,
@@ -92,7 +77,7 @@ public class RecommendationService {
         return finalScore * 100; // 최대 100점으로 가정하고 곱셈
     }
 
-    // 🌟 [새로 추가] 태그 매칭 점수 계산 (0~100점)
+    // 태그 매칭 점수 계산 (0~100점)
     private double calculateTagMatchScore(User user, StudyGroup studyGroup) {
         Set<String> userTags = user.getUserTags().stream()
                 .map(ut -> tagService.normalizeTagName(ut.getTag().getName())) // 태그 이름 정규화
@@ -114,7 +99,7 @@ public class RecommendationService {
         return matchRatio; // 0~1 사이의 값 반환, 나중에 최종 점수 계산 시 가중치 적용
     }
 
-    // 🌟 [새로 추가] 경력 적합도 점수 계산 (0~100점)
+    // 경력 적합도 점수 계산 (0~100점)
     private double calculateCareerMatchScore(User user, StudyGroup studyGroup) {
         Career userCareer = user.getCareer();
         Career requiredCareer = studyGroup.getRequiredCareer();
@@ -139,7 +124,7 @@ public class RecommendationService {
         };
     }
 
-    // 🌟 [새로 추가] 학습 스타일 일치도 점수 계산 (0~100점)
+    // 학습 스타일 일치도 점수 계산 (0~100점)
     private double calculateStudyStyleMatchScore(User user, StudyGroup studyGroup) {
         StudyStyle userStyle = user.getStudyStyle();
         StudyStyle groupStyle = studyGroup.getStudyStyle();
@@ -151,7 +136,7 @@ public class RecommendationService {
         return userStyle == groupStyle ? 1.0 : 0.0; // 일치하면 1, 아니면 0
     }
 
-    // 🌟 [새로 추가] 지역 일치도 점수 계산 (0~100점)
+    // 지역 일치도 점수 계산 (0~100점)
     private double calculateRegionMatchScore(User user, StudyGroup studyGroup) {
         String userRegion = user.getRegion();
         String groupRegion = studyGroup.getRegion();
@@ -171,13 +156,102 @@ public class RecommendationService {
         return userRegion.equalsIgnoreCase(groupRegion) ? 1.0 : 0.0; // 지역 일치하면 1, 아니면 0
     }
 
+    // --- TF-IDF 및 코사인 유사도 계산 구현 ---
 
-    // --- 기존 TF-IDF 및 코사인 유사도 계산 헬퍼 메소드들 (변경 없음) ---
+    private Map<String, Double> createTfIdfVector(String text, Map<String, Double> idfVocabulary) {
+        if (text == null || text.isBlank()) {
+            return Collections.emptyMap();
+        }
+        List<String> tokens = tokenize(text);
+        Map<String, Long> tf = calculateTf(tokens);
+        Map<String, Double> tfIdfVector = new HashMap<>();
 
-    private Map<String, Double> createTfIdfVector(String text, Map<String, Double> idfVocabulary) { /* ... */ return Collections.emptyMap(); }
-    private Map<String, Double> calculateIdf(List<String> documents) { /* ... */ return Collections.emptyMap(); }
-    private Map<String, Long> calculateTf(List<String> tokens) { /* ... */ return Collections.emptyMap(); }
-    private List<String> tokenize(String text) { /* ... */ return Collections.emptyList(); }
-    private double calculateCosineSimilarity(Map<String, Double> vec1, Map<String, Double> vec2) { /* ... */ return 0.0; }
+        for (String term : tf.keySet()) {
+            if (idfVocabulary.containsKey(term)) {
+                double tfValue = tf.get(term);
+                double idfValue = idfVocabulary.get(term);
+                tfIdfVector.put(term, tfValue * idfValue);
+            }
+        }
+        return tfIdfVector;
+    }
 
+    private Map<String, Double> calculateIdf(List<String> documents) {
+        Map<String, Double> idfMap = new HashMap<>();
+        if (documents == null || documents.isEmpty()) {
+            return idfMap;
+        }
+
+        long totalDocuments = documents.size();
+        Map<String, Integer> docCount = new HashMap<>();
+
+        for (String doc : documents) {
+            if (doc == null || doc.isBlank()) continue;
+            Set<String> uniqueTokens = new HashSet<>(tokenize(doc));
+            for (String token : uniqueTokens) {
+                docCount.put(token, docCount.getOrDefault(token, 0) + 1);
+            }
+        }
+
+        for (String term : docCount.keySet()) {
+            double idf = Math.log((double) totalDocuments / (1 + docCount.get(term)));
+            idfMap.put(term, idf);
+        }
+        return idfMap;
+    }
+
+    private Map<String, Long> calculateTf(List<String> tokens) {
+        Map<String, Long> tfMap = new HashMap<>();
+        for (String token : tokens) {
+            tfMap.put(token, tfMap.getOrDefault(token, 0L) + 1);
+        }
+        return tfMap;
+    }
+
+    private List<String> tokenize(String text) {
+        if (text == null || text.isBlank()) {
+            return Collections.emptyList();
+        }
+        // 한글/영문 숫자 제외 특수문자 제거 및 소문자 변환
+        String cleanedText = text.replaceAll("[^a-zA-Z0-9가-힣\\s]", " ").toLowerCase();
+        String[] words = cleanedText.split("\\s+");
+
+        return Arrays.stream(words)
+                .filter(word -> !word.isBlank() && word.length() > 1) // 1글자 단어 제외
+                .collect(Collectors.toList());
+    }
+
+    private double calculateCosineSimilarity(Map<String, Double> vec1, Map<String, Double> vec2) {
+        if (vec1 == null || vec1.isEmpty() || vec2 == null || vec2.isEmpty()) {
+            return 0.0;
+        }
+
+        Set<String> intersection = new HashSet<>(vec1.keySet());
+        intersection.retainAll(vec2.keySet());
+
+        if (intersection.isEmpty()) {
+            return 0.0;
+        }
+
+        double dotProduct = 0.0;
+        for (String term : intersection) {
+            dotProduct += vec1.get(term) * vec2.get(term);
+        }
+
+        double norm1 = 0.0;
+        for (double val : vec1.values()) {
+            norm1 += Math.pow(val, 2);
+        }
+
+        double norm2 = 0.0;
+        for (double val : vec2.values()) {
+            norm2 += Math.pow(val, 2);
+        }
+
+        if (norm1 == 0.0 || norm2 == 0.0) {
+            return 0.0;
+        }
+
+        return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
+    }
 }

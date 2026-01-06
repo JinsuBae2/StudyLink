@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashSet;
+
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,13 +58,14 @@ public class StudyGroupService {
     }
 
 
-    // 스터디 그룹 전체 조회
+    // 스터디 그룹 전체 조회 (필터링 적용)
     @Transactional(readOnly = true)
-    public List<StudyGroupListResponseDto> findAllStudyGroup(String region, String sort, String search) {
+    public List<StudyGroupListResponseDto> findAllStudyGroup(String region, String sort, String search, String topic, String studyStyle, Boolean recruiting) {
         List<StudyGroup> studyGroups;
         boolean hasRegion = region != null && !region.isBlank();
         boolean hasSearch = search != null && !search.isBlank();
 
+        // 1. 기본 조회 (검색어 유무에 따라)
         if (hasSearch) {
             List<StudyGroup> allGroups = studyGroupRepository.findAllWithTags();
             String lowerCaseSearch = search.toLowerCase();
@@ -82,48 +83,57 @@ public class StudyGroupService {
         } else {
             // 검색어가 없을 경우: 기존 region/sort 로직 유지
             if (hasRegion) {
-                // 지역 필터링이 있는 경우
                 studyGroups = switch (sort) {
-                    case "popular" -> studyGroupRepository.findAllByRegionOrderByPopularity(region, PageRequest.of(0, 10));
-                    case "deadline" ->
-                                    studyGroupRepository.findAllByRegionAndRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(region, LocalDate.now());
-                    default -> // "latest"
-                                    studyGroupRepository.findAllByRegionOrderByIdDesc(region);
+                    case "popular" -> studyGroupRepository.findAllByRegionOrderByPopularity(region, PageRequest.of(0, 100)); // 조회 제한 수 증가 (10 -> 100)
+                    case "deadline" -> studyGroupRepository.findAllByRegionAndRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(region, LocalDate.now());
+                    default -> studyGroupRepository.findAllByRegionOrderByIdDesc(region);
                 };
             } else {
-                // 지역 필터링이 없는 경우
                 studyGroups = switch (sort) {
-                    case "popular" -> studyGroupRepository.findAllOrderByPopularity(PageRequest.of(0, 10));
-                    case "deadline" ->
-                                   studyGroupRepository.findAllByRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(LocalDate.now());
-                    default -> // "latest"
-                                    studyGroupRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+                    case "popular" -> studyGroupRepository.findAllOrderByPopularity(PageRequest.of(0, 100));
+                    case "deadline" -> studyGroupRepository.findAllByRecruitmentDeadlineAfterOrderByRecruitmentDeadlineAsc(LocalDate.now());
+                    default -> studyGroupRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
                 };
             }
         }
 
+        // 2. 추가 필터링 (Topic, StudyStyle, Recruiting, Region) - Stream API 사용
+        // Stream을 다시 생성하여 필터링 적용
         return studyGroups.stream()
+                .filter(group -> {
+                    // Region 필터 (검색어가 있어서 DB에서 필터링되지 않은 경우를 대비해 여기서도 처리)
+                    // *주의*: 검색어가 없을 때는 이미 DB에서 region으로 필터링되어 넘어오지만, 중복 체크해도 무방함.
+                    if (region != null && !region.isBlank()) {
+                         if (!group.getRegion().equals(region)) { // 정확히 일치하는지 확인
+                             return false;
+                         }
+                    }
+                    // Topic 필터 (포함 여부)
+                    if (topic != null && !topic.isBlank()) {
+                        if (!group.getTopic().toLowerCase().contains(topic.toLowerCase())) {
+                            return false;
+                        }
+                    }
+                    // StudyStyle 필터 (정확 일치)
+                    if (studyStyle != null && !studyStyle.isBlank()) {
+                        // StudyStyle Enum String 비교
+                        if (!group.getStudyStyle().name().equalsIgnoreCase(studyStyle)) {
+                            return false;
+                        }
+                    }
+                    // Recruiting 필터 (모집 중만 보기)
+                    if (recruiting != null && recruiting) {
+                        if (group.getRecruitmentDeadline().isBefore(LocalDate.now())) {
+                            return false;
+                        }
+                    }
+                    return true;
+                })
                 .map(StudyGroupListResponseDto::new)
-                .toList();
+                .collect(Collectors.toList());
     }
 
-        // 스터디 그룹 목록 정렬을 위한 헬퍼 메서드 (검색 결과에도 적용 가능)
-        private List<StudyGroup> applySorting(List<StudyGroup> groups, String sort) {
-        return switch (sort) {
-           case "popular" -> groups.stream() // 예시: 인기 기준이 없다면 단순히 id 역순
-                            .sorted(Comparator.comparing(StudyGroup::getId).reversed())
-                            .limit(10) // 인기 10개만 가정
-                            .toList();
-           case "deadline" -> groups.stream()
-                            .filter(group -> group.getRecruitmentDeadline().isAfter(LocalDate.now()))
-                            .sorted(Comparator.comparing(StudyGroup::getRecruitmentDeadline))
-                            .toList();
-           default -> // "latest"
-                            groups.stream()
-                                            .sorted(Comparator.comparing(StudyGroup::getId).reversed())
-                                    .toList();
-        };
-    }
+
 
     // 스터디 그룹 단일 조회
     @Transactional(readOnly = true)

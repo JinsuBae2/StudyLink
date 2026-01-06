@@ -240,7 +240,7 @@ export const updateMyProfile = (data: UserProfileUpdateRequest): Promise<AxiosRe
 export const createStudyGroup = (data: StudyGroupCreateRequest): Promise<AxiosResponse<StudyGroupDetailResponse>> => {
   return apiClient.post('/api/study-groups', data);
 };
-export const getStudyGroups = (params: { region?: string; sort?: string; search?: string  } = {}) => {
+export const getStudyGroups = (params: { region?: string; sort?: string; search?: string; topic?: string; studyStyle?: string; recruiting?: boolean } = {}) => {
   return apiClient.get<StudyGroupListResponse[]>('/api/study-groups', { params });
 };
 export const getStudyGroupDetail = (id: number): Promise<AxiosResponse<StudyGroupDetailResponse>> => {

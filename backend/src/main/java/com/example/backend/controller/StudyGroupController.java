@@ -35,9 +35,12 @@ public class StudyGroupController {
     public ResponseEntity<List<StudyGroupListResponseDto>> findAllStudyGroup(
             @RequestParam(value = "region", required = false) String region,
             @RequestParam(value = "sort", required = false, defaultValue = "latest") String sort,
-            @RequestParam(value = "search", required = false) String search
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "topic", required = false) String topic,
+            @RequestParam(value = "studyStyle", required = false) String studyStyle,
+            @RequestParam(value = "recruiting", required = false) Boolean recruiting
     ) {
-        List<StudyGroupListResponseDto> studyGroups = studyGroupService.findAllStudyGroup(region, sort, search);
+        List<StudyGroupListResponseDto> studyGroups = studyGroupService.findAllStudyGroup(region, sort, search, topic, studyStyle, recruiting);
         return ResponseEntity.ok(studyGroups);
     }
 

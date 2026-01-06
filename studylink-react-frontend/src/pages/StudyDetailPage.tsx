@@ -245,7 +245,6 @@ function StudyDetailPage() {
               <span key={index} className="study-tag">#{tag}</span>
             ))}
           </div>
-          <h1 className="study-title">{studyGroup.title}</h1>
           <div className="study-meta-row">
             <span className="meta-item"><i className="fas fa-user-circle"></i> {studyGroup.creatorNickname}</span>
             <span className="meta-divider">|</span>

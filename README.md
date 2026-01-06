@@ -98,6 +98,15 @@
 
 ---
 
+## 📖 상세 문서 (Documentation)
+더 자세한 내용은 아래 문서를 참고하세요.
+
+* **[API Documentation](API_DOCUMENTATION.md)**: 백엔드 API 명세서
+* **[Database Schema](DATABASE_SCHEMA.md)**: 데이터베이스 ERD 및 테이블 설명
+* **[Frontend Guide](FRONTEND_GUIDE.md)**: 프론트엔드 구조 및 컴포넌트 가이드
+
+---
+
 ## 📂 프로젝트 구조 (Project Structure)
 
 ### Backend
